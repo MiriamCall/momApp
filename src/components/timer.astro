@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start/Stop Timer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the timer display to ensure consistent width */
+        .timer-segment {
+            min-width: 2.5rem; /* Ensures segments don't jump around */
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans">
+    <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Simple Timer</h1>
+
+        <!-- Timer Display -->
+        <div class="flex justify-center items-center text-5xl font-mono text-gray-900 mb-8">
+            <span id="hours" class="timer-segment">00</span>
+            <span class="mx-1">:</span>
+            <span id="minutes" class="timer-segment">00</span>
+            <span class="mx-1">:</span>
+            <span id="seconds" class="timer-segment">00</span>
+        </div>
+
+        <!-- Timer Controls -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <button id="startButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+                Start
+            </button>
+            <button id="stopButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75" disabled>
+                Stop
+            </button>
+            <button id="resetButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75" disabled>
+                Reset
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to HTML elements
+        const hoursDisplay = document.getElementById('hours');
+        const minutesDisplay = document.getElementById('minutes');
+        const secondsDisplay = document.getElementById('seconds');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const resetButton = document.getElementById('resetButton');
+
+        let seconds = 0;
+        let minutes = 0;
+        let hours = 0;
+        let timerInterval; // Variable to hold the interval ID
+
+        // Function to format time with leading zeros
+        function formatTime(unit) {
+            return unit < 10 ? '0' + unit : unit;
+        }
+
+        // Function to update the timer display
+        function updateDisplay() {
+            secondsDisplay.textContent = formatTime(seconds);
+            minutesDisplay.textContent = formatTime(minutes);
+            hoursDisplay.textContent = formatTime(hours);
+        }
+
+        // Function to start the timer
+        function startTimer() {
+            // Disable start button and enable stop/reset buttons
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            resetButton.disabled = false;
+
+            // Set up an interval to update the timer every second
+            timerInterval = setInterval(() => {
+                seconds++;
+                if (seconds === 60) {
+                    seconds = 0;
+                    minutes++;
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                }
+                updateDisplay(); // Update the display with new time
+            }, 1000); // 1000 milliseconds = 1 second
+        }
+
+        // Function to stop the timer
+        function stopTimer() {
+            // Clear the interval to stop the timer
+            clearInterval(timerInterval);
+            // Enable start button and disable stop button
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }
+
+        // Function to reset the timer
+        function resetTimer() {
+            // Stop the timer first
+            stopTimer();
+            // Reset all time variables to zero
+            seconds = 0;
+            minutes = 0;
+            hours = 0;
+            updateDisplay(); // Update the display to show 00:00:00
+            // Disable stop and reset buttons as the timer is reset
+            stopButton.disabled = true;
+            resetButton.disabled = true;
+        }
+
+        // Add event listeners to buttons
+        startButton.addEventListener('click', startTimer);
+        stopButton.addEventListener('click', stopTimer);
+        resetButton.addEventListener('click', resetTimer);
+
+        // Initial display update when the page loads
+        window.onload = updateDisplay;
+    </script>
+</body>
+</html>
