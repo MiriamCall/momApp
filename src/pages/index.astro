@@ -1,36 +1,68 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title=Welcome Mama! description={SITE_DESCRIPTION} />
-	</head>
-	<body class="font-sans antialiased text-gray-800 bg-gradient-to-br from-pink-50 to-purple-50 min-h-screen flex flex-col">
-		<Header />
-			<main class="container mx-auto px-4 py-8 flex-grow">
-        		<h1 class="text-4xl font-extrabold text-center text-pink-600 mb-4 sm:text-5xl">Welcome Mama!</h1>
-        		<p class="text-lg text-center text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            	Welcome to Mama's best helper. This website is to help as you take care of your baby and their needs.
-        		</p>
-        	</main>
-			<section class="hero bg-white rounded-lg shadow-xl p-8 mb-12 text-center transform hover:scale-105 transition-transform duration-300">
-    			<h1 class="text-3xl font-bold text-indigo-700 mb-4 sm:text-4xl">Welcome to the Astro Inspiration Hub</h1>
-    			<button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-colors duration-300 transform hover:-translate-y-1">Join Us or Sign In</button>
-			</section>
+  <head>
+    <BaseHead title="Welcome Mama!" description={SITE_DESCRIPTION} />
+  </head>
+  <body class="font-sans antialiased text-gray-800 bg-gradient-to-br from-peach-50 via-orange-50 to-pink-100 min-h-screen flex flex-col">
 
-		
-			<section class="section-buttons grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-    			<a href="/time_page" class="section-button bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">Timer</a>
-    			<a href="/tips" class="section-button bg-gradient-to-r from-teal-400 to-green-500 hover:from-teal-500 hover:to-green-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">Tips of the Day</a>
-    			<a href="/music" class="section-button bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">Music</a>
-    			<a href="/videos" class="section-button bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">Videos</a>
-    			<a href="/books" class="section-button bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">Books</a>
-			</section>
-		<Footer />
-	</body>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 pb-28 pt-8">
+      <h1 class="text-4xl font-extrabold text-center text-peach-700 mb-4 sm:text-5xl">Welcome Mama!</h1>
+      <p class="text-lg text-center text-gray-700 mb-8 max-w-xl mx-auto leading-relaxed">
+        Welcome to Mama's best helper. This website is designed to support you as you care for your baby with tools, tips, and calming resources.
+      </p>
+
+      <section class="bg-white rounded-lg shadow-md p-6 mb-10 text-center">
+        <h2 class="text-2xl font-bold text-peach-600 mb-4">Get Started</h2>
+        <button class="bg-peach-500 hover:bg-peach-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300">
+          Join Us or Sign In
+        </button>
+      </section>
+
+      <section class="flex flex-col gap-4 items-center">
+        <a href="/time_page" class="w-full max-w-sm bg-gradient-to-r from-orange-300 to-pink-400 hover:from-orange-400 hover:to-pink-500 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105">Timer</a>
+        <a href="/tips" class="w-full max-w-sm bg-gradient-to-r from-peach-400 to-green-400 hover:from-peach-500 hover:to-green-500 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105">Tips of the Day</a>
+        <a href="/music" class="w-full max-w-sm bg-gradient-to-r from-pink-300 to-purple-400 hover:from-pink-400 hover:to-purple-500 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105">Music</a>
+        <a href="/videos" class="w-full max-w-sm bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105">Videos</a>
+        <a href="/books" class="w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105">Books</a>
+      </section>
+    </main>
+
+    <!-- Mobile Bottom Nav with Hamburger -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-inner z-50">
+      <div class="flex justify-end items-center p-4">
+        <button id="menuToggle" class="text-gray-700 hover:text-peach-600 focus:outline-none">
+          <!-- Hamburger icon -->
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      <div id="menu" class="hidden flex-col items-center space-y-3 pb-4 transition duration-300">
+        <a href="/" class="text-peach-600 hover:underline">Home</a>
+        <a href="/time_page" class="text-peach-600 hover:underline">Timer</a>
+        <a href="/tips" class="text-peach-600 hover:underline">Tips</a>
+        <a href="/music" class="text-peach-600 hover:underline">Music</a>
+        <a href="/videos" class="text-peach-600 hover:underline">Videos</a>
+        <a href="/books" class="text-peach-600 hover:underline">Books</a>
+      </div>
+    </nav>
+
+    <Footer />
+
+    <!-- Hamburger Menu Toggle Script -->
+    <script>
+      const toggle = document.getElementById('menuToggle');
+      const menu = document.getElementById('menu');
+      toggle.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+      });
+    </script>
+  </body>
 </html>
