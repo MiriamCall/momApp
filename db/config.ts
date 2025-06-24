@@ -1,8 +1,16 @@
-import { defineDb } from "astro:db";
+import { defineDb, defineTable } from "astro:db";
+
+const FeedingTimer = defineTable({
+  columns: {
+    id: { type: "number", primaryKey: true },
+    lable: { type: "string" },
+    startedAt: { type: "date" },
+  },
+});
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: {},
+  tables: { FeedingTimer },
 });
 
 // import { defineDb, defineTable, column } from 'astro:db';

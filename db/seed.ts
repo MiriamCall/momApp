@@ -1,7 +1,10 @@
-import { db } from "astro:db";
+import { FeedingTimer } from "./config";
 
 // https://astro.build/db/seed
-export default async function seed() {
+export default async function seed({ db }) {
+  await db
+    .insert(FeedingTimer)
+    .values([{ lable: "First Feed", startedAt: new Date() }]);
   // TODO
 }
 
