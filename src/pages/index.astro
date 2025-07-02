@@ -20,8 +20,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
       <section class="bg-white rounded-lg shadow-md p-6 mb-10 text-center">
         <h2 class="text-2xl font-bold text-peach-600 mb-4">Get Started</h2>
-        <button class="bg-[#ff9d93] hover:bg-[#ff8377] text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300">
-        Join Us or Sign In
+        <button class="bg-peach-500 hover:bg-peach-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300">
+          Join Us or Sign In
         </button>
       </section>
 
@@ -60,11 +60,9 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
     <script>
       const toggle = document.getElementById('menuToggle');
       const menu = document.getElementById('menu');
-      if (toggle && menu) {
-        toggle.addEventListener('click', () => {
-          menu.classList.toggle('hidden');
-        });
-      }
+      toggle.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+      });
     </script>
   </body>
 </html>
