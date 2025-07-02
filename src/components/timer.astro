@@ -1,5 +1,4 @@
 ---
-const { timers } = Astro.props;
 ---
 <div class="flex flex-col items-center justify-center w-full">
   <!-- Timer Display -->
@@ -20,9 +19,6 @@ const { timers } = Astro.props;
   <div class="text-left w-full max-w-md">
     <h2 class="text-xl font-semibold text-gray-700 mb-2 text-center">Feeding Logs</h2>
     <ul id="logList" class="list-disc list-inside space-y-1 text-gray-800 max-h-48 overflow-y-auto"></ul>
-    <ul>
-      {timers.map((t) => (<li key={t.id}>{t.label} - started at {new Date(t.startedAt).toLocalTimerString()}</li>))}
-    </ul>
   </div>
 </div>
 
