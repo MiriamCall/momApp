@@ -6,22 +6,90 @@ const { cookies, redirect } = Astro;
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
 
+// Redirect authenticated users to the dashboard
 if (accessToken && refreshToken) {
   return redirect("/dashboard");
 }
 ---
 
-<Layout title="Sign in">
-  <h1>Sign in</h1>
-  <p>New here? <a href="/register">Create an account</a></p>
-  <form action="/api/auth/signin" method="post">
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" />
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-    <button type="submit">Login</button>
-    <button value="google" name="provider" type="submit"
-      >Sign in with Google</button
+<Layout title="Sign In - Welcome Mama!">
+  <main
+    class="flex-grow container mx-auto px-4 py-12 md:py-20 flex items-center justify-center"
+  >
+    <div
+      class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md text-center border border-peach-200"
     >
-  </form>
+      <h1 class="text-3xl font-extrabold text-peach-700 mb-4">
+        Sign In to Your Account
+      </h1>
+      <p class="text-gray-700 mb-8 text-md">
+        New here? <a
+          href="/register"
+          class="text-rose-500 hover:text-rose-600 font-semibold transition-colors duration-200"
+          >Create an account</a>
+      </p>
+
+      {/* Google OAuth Button */}
+      <form action="/api/auth/signin" method="post" class="mb-6">
+        <button
+          type="submit"
+          name="provider"
+          value="google"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300
+                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          aria-label="Sign in with Google"
+        >
+          Sign in with Google
+        </button>
+      </form>
+
+      <div class="relative flex items-center justify-center my-6">
+        <div class="absolute inset-0 flex items-center">
+          <span class="w-full border-t border-gray-300"></span>
+        </div>
+        <div class="relative bg-white px-2 text-sm text-gray-500">
+          Or sign in with email
+        </div>
+      </div>
+
+      {/* Email/Password Sign In Form */}
+      <form action="/api/auth/signin" method="post" class="space-y-4 text-left">
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 mb-1">Email</label
+          >
+          <input
+            type="email"
+            name="email"
+            id="email"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 transition duration-200"
+            placeholder="your@email.com"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1">Password</label
+          >
+          <input
+            type="password"
+            name="password"
+            id="password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 transition duration-200"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300
+                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        >
+          Login
+        </button>
+      </form>
+    </div>
+  </main>
 </Layout>
