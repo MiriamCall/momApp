@@ -1,0 +1,114 @@
+---
+// src/pages/records.astro
+import Layout from "../layouts/Layout.astro";
+import { supabase } from "../lib/supabase";
+
+// 1. Secure the page, same as the dashboard
+const accessToken = Astro.cookies.get("sb-access-token");
+const refreshToken = Astro.cookies.get("sb-refresh-token");
+
+if (!accessToken || !refreshToken) {
+  return Astro.redirect("/signin");
+}
+
+const {
+  data: { user },
+  error: authError,
+} = await supabase.auth.setSession({
+  refresh_token: refreshToken.value,
+  access_token: accessToken.value,
+});
+
+if (authError) {
+  Astro.cookies.delete("sb-access-token", { path: "/" });
+  Astro.cookies.delete("sb-refresh-token", { path: "/" });
+  return Astro.redirect("/signin");
+}
+
+// 2. Fetch nursing sessions for the logged-in user
+// RLS in Supabase automatically ensures we only get this user's data.
+const { data: nursingSessions, error: dbError } = await supabase
+  .from("nursing_sessions")
+  .select("*")
+  .order("start_time", { ascending: false }); // Show most recent first
+
+// Helper function to format duration
+const formatDuration = (seconds) => {
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds}s`;
+};
+---
+
+<Layout title="Nursing Records">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-peach-700">Nursing Records</h1>
+      <a
+        href="/dashboard"
+        class="bg-rose-500 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:bg-rose-600 transition"
+      >
+        + New Session
+      </a>
+    </div>
+
+    {
+      dbError && (
+        <p class="text-red-500">Error fetching records: {dbError.message}</p>
+      )
+    }
+    {
+      !nursingSessions ||
+        (nursingSessions.length === 0 && (
+          <div class="text-center bg-gray-50 p-8 rounded-lg">
+            <p class="text-gray-600">
+              You haven't recorded any nursing sessions yet.
+            </p>
+          </div>
+        ))
+    }
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <ul role="list" class="divide-y divide-gray-200">
+        {
+          nursingSessions?.map((session) => (
+            <li class="p-4 flex justify-between items-center hover:bg-peach-50">
+              <div>
+                <p class="font-semibold text-gray-800">
+                  {new Date(session.start_time).toLocaleString("en-US", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </p>
+                <p class="text-sm text-gray-600">
+                  <span class="font-bold capitalize">
+                    {session.nursing_side} Side
+                  </span>
+                  {" for "}
+                  <span class="font-bold">
+                    {formatDuration(session.duration_seconds)}
+                  </span>
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button class="text-blue-500 hover:underline text-sm" disabled>
+                  Edit
+                </button>
+                <button class="text-red-500 hover:underline text-sm" disabled>
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="/dashboard" class="text-peach-600 hover:underline">
+        &larr; Back to Timer
+      </a>
+    </div>
+  </div>
+</Layout>
