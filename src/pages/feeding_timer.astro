@@ -1,9 +1,88 @@
 ---
-import Timer from '../components/timer.astro';
+// src/pages/feeding_timer.astro
+import Layout from "../layouts/Layout.astro";
+import { getSupabase } from "../lib/supabaseServer"; // Ensure this path is correct for your server-side Supabase client
+import NursingTimer from "../components/NursingTimer.astro"; // Import the new timer component
+
+// Get the Supabase client configured for server-side operations
+const supabase = getSupabase(Astro); // Pass the entire Astro object (APIContext)
+
+// Get the user session
+const {
+  data: { session },
+  error,
+} = await supabase.auth.getSession();
+
+// If no session or an error, redirect to signin
+if (error || !session) {
+  return Astro.redirect("/signin");
+}
+
+// Fetch existing nursing sessions for the authenticated user
+// This data is used to display the history list on the page.
+const { data: nursingSessions, error: fetchError } = await supabase
+  .from("nursing_sessions")
+  .select("*")
+  .order("created_at", { ascending: false }); // Order by newest first
+
+if (fetchError) {
+  console.error("Error fetching nursing sessions:", fetchError);
+  // In a real application, you might want to display a user-friendly error message here
+}
+
+// Extract the user ID to pass to the client-side component
+const userId = session.user.id;
 ---
-<main class="bg-pink-50 min-h-screen flex items-center justify-center px-4 py-10 font-sans">
-  <div class="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 text-center">
-    <h1 class="text-3xl font-bold text-gray-700 mb-8">Feeding Timer</h1>
-    <Timer />
-  </div>
-</main>
+
+<Layout title="Nursing Timer - Mommy Time">
+  <main class="flex-grow container mx-auto px-4 py-12 md:py-20 text-center">
+    <h1 class="text-4xl font-extrabold text-peach-700 mb-6">Nursing Timer</h1>
+    <p class="text-lg text-gray-700 mb-8">
+      Track your baby's nursing sessions and which side was used.
+    </p>
+
+    {/* Use the new NursingTimer component, passing the userId as a prop */}
+    <NursingTimer userId={userId} />
+
+    <section class="mt-12 max-w-2xl mx-auto">
+      <h2 class="text-3xl font-bold text-peach-700 mb-6">
+        Your Nursing History
+      </h2>
+      {
+        nursingSessions && nursingSessions.length > 0 ? (
+          <ul class="space-y-4 text-left">
+            {nursingSessions.map((session) => (
+              <li class="bg-white rounded-lg shadow-md p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border border-gray-200">
+                <div class="mb-2 sm:mb-0">
+                  <p class="text-lg font-semibold text-gray-800">
+                    {new Date(session.created_at).toLocaleDateString()} at{" "}
+                    {new Date(session.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                  <p class="text-md text-gray-700">
+                    Duration: {Math.floor(session.duration_seconds / 60)}m{" "}
+                    {session.duration_seconds % 60}s
+                  </p>
+                  <p class="text-md text-gray-700">
+                    Side:{" "}
+                    {session.nursing_side.charAt(0).toUpperCase() +
+                      session.nursing_side.slice(1)}
+                  </p>
+                </div>
+                <div class="flex gap-2">
+                  {/* Future: Add edit/delete buttons here, which would trigger API routes or client-side functions */}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-gray-600">
+            No nursing sessions recorded yet. Start the timer!
+          </p>
+        )
+      }
+    </section>
+  </main>
+</Layout>
