@@ -1,228 +1,109 @@
 ---
 import Layout from "../layouts/Layout.astro";
-// 1. SERVER-SIDE IMPORT: For operations like `supabase.auth.setSession`
-import { supabase } from "../lib/supabase";
+import { getSupabase } from "../lib/supabaseServer";
 
-// 1. Secure the page by checking for a valid session
-const accessToken = Astro.cookies.get("sb-access-token");
-const refreshToken = Astro.cookies.get("sb-refresh-token");
+const supabase = getSupabase(Astro);
 
-if (!accessToken || !refreshToken) {
+// ✅ Correctly extract string values from cookies
+const accessToken = Astro.cookies.get("sb-access-token")?.value;
+const refreshToken = Astro.cookies.get("sb-refresh-token")?.value;
+
+// ✅ Manually restore session from tokens
+if (accessToken && refreshToken) {
+  await supabase.auth.setSession({
+    access_token: accessToken,
+    refresh_token: refreshToken,
+  });
+}
+
+const {
+  data: { session },
+  error,
+} = await supabase.auth.getSession();
+
+if (error || !session) {
   return Astro.redirect("/signin");
 }
 
-const { data, error } = await supabase.auth.setSession({
-  refresh_token: refreshToken.value,
-  access_token: accessToken.value,
-});
-
-if (error) {
-  Astro.cookies.delete("sb-access-token", { path: "/" });
-  Astro.cookies.delete("sb-refresh-token", { path: "/" });
-  return Astro.redirect("/signin");
-}
-
-const user = data.user;
-// Ensure it's null if not present, not undefined, for cleaner JS handling
-const serverUserId = user?.id || null;
+const userEmail = session.user?.email || "Mama";
 ---
 
-<Layout title="Timer Dashboard">
-  <div
-    class="container mx-auto px-4 py-8 text-center"
-    data-user-id={serverUserId}
-  >
-    <h1 class="text-3xl font-bold text-peach-700 mb-2">
-      Hi, {user?.email}!
+<Layout title="Dashboard - Mommy Time">
+  <main class="flex-grow container mx-auto px-4 py-12 md:py-20 text-center">
+    <h1
+      class="text-4xl font-extrabold text-peach-700 mb-6 sm:text-5xl md:text-6xl"
+    >
+      Welcome, {userEmail}!
     </h1>
-    <p class="text-gray-600 mb-8">Ready to start a new nursing session?</p>
+    <p
+      class="text-lg text-gray-700 mb-10 max-w-xl mx-auto leading-relaxed md:text-xl"
+    >
+      Your personalized hub for tracking, insights, and support.
+    </p>
 
     <div
-      id="timer-display"
-      class="text-6xl font-mono bg-white rounded-lg shadow-inner p-6 mb-6 max-w-sm mx-auto"
+      class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-auto border border-peach-200"
     >
-      00:00:00
-    </div>
+      <h2 class="text-2xl font-bold text-peach-700 mb-6">Quick Actions</h2>
+      <div class="flex flex-col gap-6">
+        <a
+          href="/feeding_timer"
+          class="inline-flex items-center justify-center bg-rose-500 hover:bg-peach-600 text-white font-semibold py-4 px-8 rounded-lg shadow-md transition duration-300
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 text-lg md:text-xl"
+          aria-label="Go to the Nursing Timer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 mr-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Nursing Timer
+        </a>
 
-    <div id="side-selector" class="mb-6">
-      <h2 class="text-xl font-semibold text-peach-700 mb-3">
-        Which side are you nursing on?
-      </h2>
-      <div class="flex justify-center gap-4">
-        <button
-          id="btn-left"
-          class="side-btn border-2 border-rose-400 text-rose-500 font-bold py-3 px-8 rounded-full transition"
-          data-side="left"
+        <a
+          href="/records"
+          class="inline-flex items-center justify-center bg-orange-400 hover:bg-orange-500 text-white font-semibold py-4 px-8 rounded-lg shadow-md transition duration-300
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 text-lg md:text-xl"
+          aria-label="View all your Records"
         >
-          Left
-        </button>
-        <button
-          id="btn-right"
-          class="side-btn border-2 border-rose-400 text-rose-500 font-bold py-3 px-8 rounded-full transition"
-          data-side="right"
-        >
-          Right
-        </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 mr-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 17v2a2 2 0 002 2h2a2 2 0 002-2v-2m6 0H9m-9 0h9m7 0h2a2 2 0 002-2v-2a2 2 0 00-2-2H7a2 2 0 00-2 2v2a2 2 0 002 2h2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-10 0H4a2 2 0 01-2-2V7a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-2"
+            ></path>
+          </svg>
+          View Records
+        </a>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-peach-100">
+        <form action="/api/auth/signout" method="post">
+          <button
+            type="submit"
+            class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            aria-label="Sign out of your account"
+          >
+            Sign Out
+          </button>
+        </form>
       </div>
     </div>
-
-    <div class="flex justify-center gap-4">
-      <button
-        id="start-btn"
-        class="bg-rose-500 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:bg-rose-600 transition disabled:opacity-50"
-        disabled
-      >
-        Start
-      </button>
-      <button
-        id="stop-btn"
-        class="bg-gray-500 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:bg-gray-600 transition hidden"
-      >
-        Stop & Save
-      </button>
-    </div>
-
-    <div class="mt-12 flex flex-col items-center gap-4">
-      <a href="/records" class="text-peach-600 hover:underline font-semibold">
-        View Past Nursing Records
-      </a>
-      <form action="/api/auth/signout">
-        <button
-          type="submit"
-          class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300"
-        >
-          Sign Out
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <style>
-    .side-btn.selected {
-      background-color: #fecdd3; /* light pink */
-      border-color: #fb7185; /* rose-400 */
-    }
-  </style>
-
-  <script type="module">
-    // 2. CLIENT-SIDE IMPORT: For browser-side operations
-    // This uses the alias defined in tsconfig.json
-    import { supabase } from "~/lib/supabase";
-
-    // --- State Management ---
-    let timerInterval = null;
-    let seconds = 0;
-    let startTime = null;
-    let nursingSide = null;
-    let currentUserId = null; // Will be populated from data-user-id
-
-    // --- DOM Elements (declare globally, assign inside DOMContentLoaded) ---
-    let timerDisplay;
-    let startBtn;
-    let stopBtn;
-    let sideSelector;
-    let sideButtons;
-    let mainContainer; // Reference to the container with data-user-id
-
-    // --- Timer Functions ---
-    function formatTime(totalSeconds) {
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const secs = totalSeconds % 60;
-      return [hours, minutes, secs]
-        .map((v) => v.toString().padStart(2, "0"))
-        .join(":");
-    }
-
-    function updateTimerDisplay() {
-      seconds++;
-      timerDisplay.textContent = formatTime(seconds);
-    }
-
-    // --- DOM Ready Event Listener ---
-    document.addEventListener("DOMContentLoaded", () => {
-      // Assign DOM elements AFTER the DOM is fully loaded
-      timerDisplay = document.getElementById("timer-display");
-      startBtn = document.getElementById("start-btn");
-      stopBtn = document.getElementById("stop-btn");
-      sideSelector = document.getElementById("side-selector");
-      sideButtons = document.querySelectorAll(".side-btn");
-      mainContainer = document.querySelector(".container.mx-auto"); // Get the main container
-
-      // Retrieve userId from data attribute
-      const userIdFromAttribute = mainContainer?.dataset.userId;
-      if (userIdFromAttribute && userIdFromAttribute !== "null") {
-        currentUserId = userIdFromAttribute;
-      } else {
-        console.error(
-          "User ID not found in data attribute or is null. User may not be logged in correctly."
-        );
-      }
-
-      // --- Event Listeners ---
-      sideButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          sideButtons.forEach((btn) => btn.classList.remove("selected"));
-          button.classList.add("selected");
-          nursingSide = button.getAttribute("data-side");
-          startBtn.disabled = false;
-        });
-      });
-
-      startBtn.addEventListener("click", async () => {
-        if (!currentUserId) {
-          alert(
-            "Authentication error: User ID not found. Please sign in again."
-          );
-          window.location.href = "/signin";
-          return;
-        }
-
-        startTime = new Date();
-        seconds = 0;
-        timerDisplay.textContent = formatTime(seconds);
-        timerInterval = setInterval(updateTimerDisplay, 1000);
-
-        startBtn.classList.add("hidden");
-        stopBtn.classList.remove("hidden");
-        sideSelector.style.display = "none";
-      });
-
-      stopBtn.addEventListener("click", async () => {
-        const endTime = new Date();
-        clearInterval(timerInterval);
-
-        const nursingSession = {
-          user_id: currentUserId,
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
-          duration_seconds: seconds,
-          nursing_side: nursingSide,
-        };
-
-        try {
-          // supabase is already imported at the top of this module script
-          const { error } = await supabase
-            .from("nursing_sessions")
-            .insert([nursingSession]);
-
-          if (error) throw error;
-
-          alert("Nursing session saved successfully!");
-          window.location.href = "/records";
-        } catch (error) {
-          console.error("Error saving session:", error);
-          alert(`Failed to save session: ${error.message}`);
-        }
-
-        startBtn.classList.remove("hidden");
-        stopBtn.classList.add("hidden");
-        startBtn.disabled = true;
-        sideSelector.style.display = "block";
-        sideButtons.forEach((btn) => btn.classList.remove("selected"));
-        timerDisplay.textContent = "00:00:00";
-        nursingSide = null;
-      });
-    });
-  </script>
+  </main>
 </Layout>

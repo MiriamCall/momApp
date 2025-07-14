@@ -2,6 +2,16 @@
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+// Corrected import path for the server-side Supabase client
+import { getSupabase } from "../lib/supabaseServer";
+
+// Pass the entire Astro global object (which is of type APIContext)
+const supabase = getSupabase(Astro);
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+const isAuthenticated = !!session;
 ---
 
 <!doctype html>
@@ -30,39 +40,78 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
         as you care for your baby with tools, tips, and calming resources.
       </p>
 
-      <section
-        aria-labelledby="get-started-heading"
-        class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
-      >
-        <h2
-          id="get-started-heading"
-          class="text-3xl font-bold text-peach-700 mb-4"
-        >
-          Get Started
-        </h2>
-        <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
-          Create your account or sign in to access your personalized tools and
-          tips.
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-          <a
-            href="/signin"
-            class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            aria-label="Sign in to your account"
+      {
+        isAuthenticated ? (
+          <section
+            aria-labelledby="welcome-back-heading"
+            class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
           >
-            Sign In
-          </a>
-          <a
-            href="/register"
-            class="inline-block bg-rose-500 hover:bg-orange-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            aria-label="Register for a new account"
+            <h2
+              id="welcome-back-heading"
+              class="text-3xl font-bold text-peach-700 mb-4"
+            >
+              Welcome Back, Mama!
+            </h2>
+            <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
+              You're signed in. Explore your personalized tools.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+              <a
+                href="/dashboard"
+                class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                aria-label="Go to your Dashboard"
+              >
+                Go to Dashboard
+              </a>
+              <form action="/api/auth/signout" method="post">
+                <button
+                  type="submit"
+                  class="inline-block bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                  aria-label="Sign out"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          </section>
+        ) : (
+          <section
+            aria-labelledby="get-started-heading"
+            class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
           >
-            Register
-          </a>
-        </div>
-      </section>
+            <h2
+              id="get-started-heading"
+              class="text-3xl font-bold text-peach-700 mb-4"
+            >
+              Get Started
+            </h2>
+            <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
+              Create your account or sign in to access your personalized tools
+              and tips.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+              <a
+                href="/signin"
+                class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                aria-label="Sign in to your account"
+              >
+                Sign In
+              </a>
+              <a
+                href="/register"
+                class="inline-block bg-rose-500 hover:bg-orange-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                aria-label="Register for a new account"
+              >
+                Register
+              </a>
+            </div>
+          </section>
+        )
+      }
 
       <section aria-labelledby="tools-heading" class="mb-10">
         <h2
@@ -75,23 +124,29 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
         <div
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"
         >
-          {/* Tool Card: Timer */}
-          <div id="timerSection" class="hidden">
-            <a
-              href="/time_page"
-              class="block bg-gradient-to-br from-orange-200 to-pink-300 p-6 rounded-lg shadow-md text-center
-              hover:from-orange-300 hover:to-pink-400 hover:shadow-lg transform hover:-translate-y-1 transition duration-300
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-              aria-label="Go to Baby Timer page"
-            >
-              <h3 class="text-2xl font-bold text-orange-800 mb-2">Timer</h3>
-              <p class="text-orange-700 text-md">
-                Track feedings, naps, and diaper changes.
-              </p>
-            </a>
-          </div>
+          {
+            isAuthenticated && (
+              <div id="timerSection">
+                {/* Tool Card: Timer - Only visible if authenticated */}
+                <a
+                  href="/time_page"
+                  class="block bg-gradient-to-br from-orange-200 to-pink-300 p-6 rounded-lg shadow-md text-center
+                hover:from-orange-300 hover:to-pink-400 hover:shadow-lg transform hover:-translate-y-1 transition duration-300
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                  aria-label="Go to Baby Timer page"
+                >
+                  <h3 class="text-2xl font-bold text-orange-800 mb-2">Timer</h3>
+                  <p class="text-orange-700 text-md">
+                    Track feedings, naps, and diaper changes.
+                  </p>
+                </a>
+              </div>
+            )
+          }
 
-          {/* Tool Card: Tips of the Day */}
+          {
+            /* Other Tool Cards (Tips, Music, Videos, Books) - Always visible, but might redirect to signin if not authenticated and trying to access data */
+          }
           <a
             href="/tips"
             class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
@@ -101,7 +156,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
             <p class="text-md">Daily wisdom for your parenting journey.</p>
           </a>
 
-          {/* Tool Card: Music */}
           <a
             href="/music"
             class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
@@ -111,7 +165,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
             <p class="text-md">Soothing sounds for peaceful moments.</p>
           </a>
 
-          {/* Tool Card: Videos */}
           <a
             href="/videos"
             class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
@@ -121,7 +174,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
             <p class="text-md">Visual guides and relaxing scenes.</p>
           </a>
 
-          {/* Tool Card: Books */}
           <a
             href="/books"
             class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
@@ -131,7 +183,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
             <p class="text-md">Recommended reads for new parents.</p>
           </a>
         </div>
-        {/* End of grid container */}
       </section>
     </main>
 
@@ -142,8 +193,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
       <div
         id="menu"
         class="flex flex-col items-end space-y-3 mb-4
-        opacity-0 pointer-events-none transform translate-y-0
-        transition-all duration-300 ease-in-out"
+        opacity-0 pointer-events-none transform translate-y-0
+        transition-all duration-300 ease-in-out"
         role="menu"
         aria-orientation="vertical"
         aria-hidden="true"
@@ -153,11 +204,17 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
           class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
           role="menuitem">Home</a
         >
-        <a
-          href="/time_page"
-          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem">Timer</a
-        >
+        {
+          isAuthenticated && (
+            <a
+              href="/time_page"
+              class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+              role="menuitem"
+            >
+              Timer
+            </a>
+          )
+        }
         <a
           href="/tips"
           class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
@@ -183,7 +240,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
       <button
         id="menuToggle"
         class="bg-rose-500 hover:bg-peach-600 text-white p-4 rounded-full shadow-lg
-        transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
         aria-expanded="false"
         aria-controls="menu"
         aria-label="Open main menu"
@@ -206,6 +263,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
     <Footer />
 
     <script>
+      // ... (your existing JavaScript for menu toggle remains the same)
       const toggle = document.getElementById("menuToggle");
       const menu = document.getElementById("menu");
       const toggleIconPath = toggle ? toggle.querySelector("svg path") : null;
