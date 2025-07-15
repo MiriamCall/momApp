@@ -12,8 +12,8 @@ import type { AstroGlobal } from "astro"; // Import AstroGlobal for type-safety 
 export const getSupabase = (astro: AstroGlobal) => {
   // Type as AstroGlobal for clarity
   return createServerClient(
-    import.meta.env.SUPABASE_URL,
-    import.meta.env.SUPABASE_ANON_KEY,
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name: string) {
