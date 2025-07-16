@@ -1,9 +1,12 @@
 ---
+// src/components/NursingTimer.astro
+
 interface Props {
   userId: string;
+  accessToken: string;
 }
 
-const { userId } = Astro.props;
+const { userId, accessToken } = Astro.props;
 ---
 
 <div
@@ -69,7 +72,9 @@ const { userId } = Astro.props;
   </div>
 </div>
 
-<script type="module" define:vars={{ userId }}>
+<!-- ✅ Pass both userId and accessToken to the script -->
+<script type="module" define:vars={{ userId, accessToken }}>
   import { initNursingTimer } from "../../src/scripts/nursingTimer";
-  initNursingTimer({ userId });
+
+  initNursingTimer({ userId, accessToken });
 </script>

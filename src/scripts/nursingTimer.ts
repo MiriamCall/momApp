@@ -2,12 +2,20 @@ import { createClient } from "@supabase/supabase-js";
 
 interface InitOptions {
   userId: string;
+  accessToken: string;
 }
 
-export function initNursingTimer({ userId }: InitOptions) {
+export function initNursingTimer({ userId, accessToken }: InitOptions) {
   const supabaseClient = createClient(
     import.meta.env.PUBLIC_SUPABASE_URL!,
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY!
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    }
   );
 
   const timerDisplay = document.getElementById(
@@ -177,17 +185,15 @@ export function initNursingTimer({ userId }: InitOptions) {
     saveMessage.textContent = "Saving session...";
 
     try {
-      const { data, error } = await supabaseClient
-        .from("nursing_sessions")
-        .insert([
-          {
-            user_id: userId,
-            start_time: startTime.toISOString(),
-            end_time: endTime.toISOString(),
-            duration_seconds: seconds,
-            nursing_side: selectedSide,
-          },
-        ]);
+      const { error } = await supabaseClient.from("nursing_sessions").insert([
+        {
+          user_id: userId,
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+          duration_seconds: seconds,
+          nursing_side: selectedSide,
+        },
+      ]);
 
       if (error) {
         saveMessage.textContent = `Error saving: ${error.message}`;

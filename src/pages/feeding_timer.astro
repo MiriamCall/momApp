@@ -1,11 +1,11 @@
 ---
 // src/pages/feeding_timer.astro
 import Layout from "../layouts/Layout.astro";
-import { getSupabase } from "../lib/supabaseServer"; // Ensure this path is correct for your server-side Supabase client
-import NursingTimer from "../components/NursingTimer.astro"; // Import the new timer component
+import { getSupabase } from "../lib/supabaseServer";
+import NursingTimer from "../components/NursingTimer.astro";
 
 // Get the Supabase client configured for server-side operations
-const supabase = getSupabase(Astro); // Pass the entire Astro object (APIContext)
+const supabase = getSupabase(Astro);
 
 // Get the user session
 const {
@@ -18,20 +18,19 @@ if (error || !session) {
   return Astro.redirect("/signin");
 }
 
+// Extract user ID and access token
+const userId = session.user.id;
+const accessToken = session.access_token;
+
 // Fetch existing nursing sessions for the authenticated user
-// This data is used to display the history list on the page.
 const { data: nursingSessions, error: fetchError } = await supabase
   .from("nursing_sessions")
   .select("*")
-  .order("created_at", { ascending: false }); // Order by newest first
+  .order("created_at", { ascending: false });
 
 if (fetchError) {
   console.error("Error fetching nursing sessions:", fetchError);
-  // In a real application, you might want to display a user-friendly error message here
 }
-
-// Extract the user ID to pass to the client-side component
-const userId = session.user.id;
 ---
 
 <Layout title="Nursing Timer - Mommy Time">
@@ -41,8 +40,8 @@ const userId = session.user.id;
       Track your baby's nursing sessions and which side was used.
     </p>
 
-    {/* Use the new NursingTimer component, passing the userId as a prop */}
-    <NursingTimer userId={userId} />
+    <!-- ✅ Pass both userId and accessToken -->
+    <NursingTimer userId={userId} accessToken={accessToken} />
 
     <section class="mt-12 max-w-2xl mx-auto">
       <h2 class="text-3xl font-bold text-peach-700 mb-6">
@@ -72,7 +71,7 @@ const userId = session.user.id;
                   </p>
                 </div>
                 <div class="flex gap-2">
-                  {/* Future: Add edit/delete buttons here, which would trigger API routes or client-side functions */}
+                  {/* Future: Add edit/delete buttons here */}
                 </div>
               </li>
             ))}
