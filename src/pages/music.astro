@@ -1,0 +1,90 @@
+---
+// src/pages/music.astro
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Soothing Music for Baby and Parent">
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-4xl font-extrabold text-rose-700 mb-8 text-center">
+      Soothing Music for Baby and Parent
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Music Track 1 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg border border-rose-200"
+      >
+        <h2 class="text-2xl font-bold text-indigo-700 mb-4">
+          Lullaby for Sweet Dreams
+        </h2>
+        <audio controls class="w-full">
+          <source
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+        <p class="text-gray-700 mt-4 leading-relaxed">
+          A gentle melody designed to help your little one drift off to sleep.
+        </p>
+      </div>
+
+      <!-- Music Track 2 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg border border-rose-200"
+      >
+        <h2 class="text-2xl font-bold text-indigo-700 mb-4">
+          Calm Ocean Waves
+        </h2>
+        <audio controls class="w-full">
+          <source
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+        <p class="text-gray-700 mt-4 leading-relaxed">
+          Relaxing sounds of the ocean to create a peaceful environment.
+        </p>
+      </div>
+
+      <!-- Music Track 3 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg border border-rose-200"
+      >
+        <h2 class="text-2xl font-bold text-indigo-700 mb-4">
+          Gentle Forest Sounds
+        </h2>
+        <audio controls class="w-full">
+          <source
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+        <p class="text-gray-700 mt-4 leading-relaxed">
+          Immerse yourself in the tranquil sounds of a serene forest.
+        </p>
+      </div>
+
+      <!-- Music Track 4 -->
+      <div
+        class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center text-center transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg border border-rose-200"
+      >
+        <h2 class="text-2xl font-bold text-indigo-700 mb-4">
+          Soft Piano Melodies
+        </h2>
+        <audio controls class="w-full">
+          <source
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+        <p class="text-gray-700 mt-4 leading-relaxed">
+          Calming piano music perfect for quiet time or winding down.
+        </p>
+      </div>
+    </div>
+  </main>
+</Layout>
