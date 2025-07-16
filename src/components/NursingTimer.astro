@@ -1,0 +1,80 @@
+---
+// src/components/NursingTimer.astro
+
+interface Props {
+  userId: string;
+  accessToken: string;
+}
+
+const { userId, accessToken } = Astro.props;
+---
+
+<div
+  class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-auto border border-peach-200"
+>
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-peach-700 mb-4">Current Session</h2>
+    <div class="text-5xl font-mono text-gray-800 mb-4" id="timerDisplay">
+      00:00:00
+    </div>
+    <div class="flex justify-center gap-4 mb-6">
+      <button
+        id="startButton"
+        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+      >
+        Start
+      </button>
+      <button
+        id="stopButton"
+        class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        disabled
+      >
+        Stop
+      </button>
+      <button
+        id="resetButton"
+        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        disabled
+      >
+        Reset
+      </button>
+    </div>
+
+    <div class="flex justify-center gap-4 mb-6">
+      <button
+        id="leftSideButton"
+        class="side-button bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+        data-side="left"
+      >
+        Left Side
+      </button>
+      <button
+        id="rightSideButton"
+        class="side-button bg-purple-400 hover:bg-purple-500 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400"
+        data-side="right"
+      >
+        Right Side
+      </button>
+    </div>
+
+    <p id="selectedSide" class="text-lg font-medium text-gray-700 mb-4">
+      Side: Not Selected
+    </p>
+
+    <button
+      id="saveButton"
+      class="w-full bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+      disabled
+    >
+      Save Nursing Session
+    </button>
+    <p id="saveMessage" class="text-sm mt-2 text-red-500"></p>
+  </div>
+</div>
+
+<!-- ✅ Pass both userId and accessToken to the script -->
+<script type="module" define:vars={{ userId, accessToken }}>
+  import { initNursingTimer } from "../../src/scripts/nursingTimer";
+
+  initNursingTimer({ userId, accessToken });
+</script>
