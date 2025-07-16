@@ -1,18 +1,43 @@
 ---
-// Layout.astro
+// src/layouts/Layout.astro
 import "../styles/global.css";
+import BaseHead from "../components/BaseHead.astro"; // Import BaseHead component
+import Footer from "../components/Footer.astro"; // Import Footer component
+import NavBar from "../components/NavBar.astro"; // Import the NavBar component
+import { getSupabase } from "../lib/supabaseServer"; // Import server-side Supabase client
+import { SITE_DESCRIPTION } from "../consts"; // Import SITE_DESCRIPTION
+
 const { title = "Auth Page" } = Astro.props;
+
+// Initialize Supabase and check session for authentication status
+const supabase = getSupabase(Astro);
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+const isAuthenticated = !!session;
 ---
 
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>{title}</title>
+    <!-- Use BaseHead component for consistent head content -->
+    <BaseHead title={title} description={SITE_DESCRIPTION} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
-  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <main class="w-full max-w-md p-6 bg-white rounded-xl shadow-md">
+  <body
+    class="font-sans antialiased text-gray-800 bg-gradient-to-br from-peach-50 via-orange-50 to-pink-100 min-h-screen flex flex-col"
+  >
+    <main
+      id="main-content"
+      role="main"
+      class="flex-grow container mx-auto px-4 pb-28 pt-8 md:pt-16 lg:pt-20"
+    >
       <slot />
     </main>
+    <!-- Include the NavBar component, passing the authentication status -->
+    <NavBar isAuthenticated={isAuthenticated} />
+    <!-- Include the Footer component -->
+    <Footer />
   </body>
 </html>

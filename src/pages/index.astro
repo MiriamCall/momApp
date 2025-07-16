@@ -1,7 +1,7 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Footer from "../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+// src/pages/index.astro
+import Layout from "../layouts/Layout.astro"; // Import the Layout component
+import { SITE_DESCRIPTION } from "../consts";
 // Corrected import path for the server-side Supabase client
 import { getSupabase } from "../lib/supabaseServer";
 
@@ -14,323 +14,166 @@ const {
 const isAuthenticated = !!session;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title="Welcome Mama!" description={SITE_DESCRIPTION} />
-  </head>
-
-  <body
-    class="font-sans antialiased text-gray-800 bg-gradient-to-br from-peach-50 via-orange-50 to-pink-100 min-h-screen flex flex-col"
+<Layout title="Welcome Mama!">
+  <h1
+    class="text-4xl font-extrabold text-center text-peach-700 mb-4 sm:text-5xl md:text-6xl lg:text-7xl"
   >
-    <main
-      id="main-content"
-      role="main"
-      class="flex-grow container mx-auto px-4 pb-28 pt-8 md:pt-16 lg:pt-20"
-    >
-      <h1
-        class="text-4xl font-extrabold text-center text-peach-700 mb-4 sm:text-5xl md:text-6xl lg:text-7xl"
-      >
-        Welcome Mama!
-      </h1>
-      <p
-        class="text-lg text-center text-gray-700 mb-8 max-w-xl mx-auto leading-relaxed md:text-xl md:max-w-3xl lg:max-w-4xl"
-      >
-        Welcome to Mama's best helper. This website is designed to support you
-        as you care for your baby with tools, tips, and calming resources.
-      </p>
+    Welcome Mama!
+  </h1>
+  <p
+    class="text-lg text-center text-gray-700 mb-8 max-w-xl mx-auto leading-relaxed md:text-xl md:max-w-3xl lg:max-w-4xl"
+  >
+    Welcome to Mama's best helper. This website is designed to support you as
+    you care for your baby with tools, tips, and calming resources.
+  </p>
 
-      {
-        isAuthenticated ? (
-          <section
-            aria-labelledby="welcome-back-heading"
-            class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
-          >
-            <h2
-              id="welcome-back-heading"
-              class="text-3xl font-bold text-peach-700 mb-4"
-            >
-              Welcome Back, Mama!
-            </h2>
-            <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
-              You're signed in. Explore your personalized tools.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href="/dashboard"
-                class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-                aria-label="Go to your Dashboard"
-              >
-                Go to Dashboard
-              </a>
-              <form action="/api/auth/signout" method="post">
-                <button
-                  type="submit"
-                  class="inline-block bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-                  aria-label="Sign out"
-                >
-                  Sign Out
-                </button>
-              </form>
-            </div>
-          </section>
-        ) : (
-          <section
-            aria-labelledby="get-started-heading"
-            class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
-          >
-            <h2
-              id="get-started-heading"
-              class="text-3xl font-bold text-peach-700 mb-4"
-            >
-              Get Started
-            </h2>
-            <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
-              Create your account or sign in to access your personalized tools
-              and tips.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href="/signin"
-                class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-                aria-label="Sign in to your account"
-              >
-                Sign In
-              </a>
-              <a
-                href="/register"
-                class="inline-block bg-rose-500 hover:bg-orange-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-                aria-label="Register for a new account"
-              >
-                Register
-              </a>
-            </div>
-          </section>
-        )
-      }
-
-      <section aria-labelledby="tools-heading" class="mb-10">
+  {
+    isAuthenticated ? (
+      <section
+        aria-labelledby="welcome-back-heading"
+        class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
+      >
         <h2
-          id="tools-heading"
-          class="text-3xl font-bold text-peach-700 text-center mb-8 md:text-4xl"
+          id="welcome-back-heading"
+          class="text-3xl font-bold text-peach-700 mb-4"
         >
-          Explore Our Tools
+          Welcome Back, Mama!
         </h2>
-
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"
+        <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
+          You're signed in. Explore your personalized tools.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <form action="/api/auth/signout" method="get">
+            <button
+              type="submit"
+              class="inline-block bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+              aria-label="Sign out"
+            >
+              Sign Out
+            </button>
+          </form>
+        </div>
+      </section>
+    ) : (
+      <section
+        aria-labelledby="get-started-heading"
+        class="max-w-sm mx-auto bg-peach-100 border border-peach-300 rounded-xl shadow-lg p-8 mb-10 text-center md:max-w-md md:p-10 md:mb-16"
+      >
+        <h2
+          id="get-started-heading"
+          class="text-3xl font-bold text-peach-700 mb-4"
         >
-          {
-            isAuthenticated && (
-              <div id="timerSection">
-                {/* Tool Card: Timer - Only visible if authenticated */}
-                <a
-                  href="/feeding_timer"
-                  class="block bg-gradient-to-br from-orange-200 to-pink-300 p-6 rounded-lg shadow-md text-center
-                hover:from-orange-300 hover:to-pink-400 hover:shadow-lg transform hover:-translate-y-1 transition duration-300
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                  aria-label="Go to Baby Timer page"
-                >
-                  <h3 class="text-2xl font-bold text-orange-800 mb-2">Timer</h3>
-                  <p class="text-orange-700 text-md">
-                    Track feedings, naps, and diaper changes.
-                  </p>
-                </a>
-              </div>
-            )
-          }
-
-          {
-            /* Other Tool Cards (Tips, Music, Videos, Books) - Always visible, but might redirect to signin if not authenticated and trying to access data */
-          }
+          Get Started
+        </h2>
+        <p class="text-md text-gray-700 mb-6 max-w-md mx-auto">
+          Create your account or sign in to access your personalized tools and
+          tips.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
           <a
-            href="/tips"
-            class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            aria-label="View daily parenting tips"
+            href="/signin"
+            class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            aria-label="Sign in to your account"
           >
-            <h3 class="text-2xl font-bold mb-2">Tips of the Day</h3>
-            <p class="text-md">Daily wisdom for your parenting journey.</p>
+            Sign In
           </a>
-
           <a
-            href="/music"
-            class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            aria-label="Access calming music for baby and parent"
+            href="/register"
+            class="inline-block bg-rose-500 hover:bg-orange-500 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            aria-label="Register for a new account"
           >
-            <h3 class="text-2xl font-bold mb-2">Music</h3>
-            <p class="text-md">Soothing sounds for peaceful moments.</p>
-          </a>
-
-          <a
-            href="/videos"
-            class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            aria-label="Watch helpful and calming videos"
-          >
-            <h3 class="text-2xl font-bold mb-2">Videos</h3>
-            <p class="text-md">Visual guides and relaxing scenes.</p>
-          </a>
-
-          <a
-            href="/books"
-            class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            aria-label="Browse recommended books for new parents"
-          >
-            <h3 class="text-2xl font-bold mb-2">Books</h3>
-            <p class="text-md">Recommended reads for new parents.</p>
+            Register
           </a>
         </div>
       </section>
-    </main>
+    )
+  }
 
-    <nav
-      aria-label="Main Navigation"
-      class="fixed bottom-4 right-4 z-50 flex flex-col items-end"
+  <section aria-labelledby="tools-heading" class="mb-10">
+    <h2
+      id="tools-heading"
+      class="text-3xl font-bold text-peach-700 text-center mb-8 md:text-4xl"
     >
-      <div
-        id="menu"
-        class="flex flex-col items-end space-y-3 mb-4
-        opacity-0 pointer-events-none transform translate-y-0
-        transition-all duration-300 ease-in-out"
-        role="menu"
-        aria-orientation="vertical"
-        aria-hidden="true"
-      >
-        <a
-          href="/"
-          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem">Home</a
-        >
-        {
-          isAuthenticated && (
+      Explore Our Tools
+    </h2>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"
+    >
+      {
+        isAuthenticated && (
+          <div id="timerSection">
+            {/* Tool Card: Timer - Only visible if authenticated */}
             <a
               href="/feeding_timer"
-              class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-              role="menuitem"
+              class="block bg-gradient-to-br from-orange-200 to-pink-300 p-6 rounded-lg shadow-md text-center
+            hover:from-orange-300 hover:to-pink-400 hover:shadow-lg transform hover:-translate-y-1 transition duration-300
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+              aria-label="Go to Baby Timer page"
             >
-              Timer
+              <h3 class="text-2xl font-bold text-orange-800 mb-2">Timer</h3>
+              <p class="text-orange-700 text-md">
+                Track feedings, naps, and diaper changes.
+              </p>
             </a>
-          )
-        }
-        <a
-          href="/tips"
-          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem">Tips</a
-        >
-        <a
-          href="/music"
-          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem">Music</a
-        >
-        <a
-          href="/videos"
-          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem">Videos</a
-        >
-        <a
-          href="/books"
-          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem">Books</a
-        >
-      </div>
-
-      <button
-        id="menuToggle"
-        class="bg-rose-500 hover:bg-peach-600 text-white p-4 rounded-full shadow-lg
-        transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-        aria-expanded="false"
-        aria-controls="menu"
-        aria-label="Open main menu"
-      >
-        <svg
-          class="w-8 h-8 transition-transform duration-300"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
-    </nav>
-
-    <Footer />
-
-    <script>
-      // ... (your existing JavaScript for menu toggle remains the same)
-      const toggle = document.getElementById("menuToggle");
-      const menu = document.getElementById("menu");
-      const toggleIconPath = toggle ? toggle.querySelector("svg path") : null;
-
-      if (toggle && menu && toggleIconPath) {
-        toggle.addEventListener("click", () => {
-          const isMenuHidden = menu.classList.contains("opacity-0"); // Toggle menu visibility and animation
-
-          menu.classList.toggle("opacity-0");
-          menu.classList.toggle("pointer-events-none");
-          menu.classList.toggle("translate-y-[-100%]"); // Adjust if menu height changes
-          menu.classList.toggle("translate-y-0"); // Toggle hamburger to X icon animation
-
-          if (isMenuHidden) {
-            // If menu is currently hidden (and will be shown)
-            toggleIconPath.setAttribute("d", "M6 18L18 6M6 6l12 12"); // To X
-            toggle.setAttribute("aria-expanded", "true");
-            menu.setAttribute("aria-hidden", "false"); // Focus the first item in the menu when opened for keyboard users
-            const firstMenuItem = menu.querySelector('a[role="menuitem"]');
-            if (firstMenuItem) {
-              (firstMenuItem as HTMLElement).focus();
-            }
-          } else {
-            // If menu is currently visible (and will be hidden)
-            toggleIconPath.setAttribute("d", "M4 6h16M4 12h16M4 18h16"); // Back to hamburger
-            toggle.setAttribute("aria-expanded", "false");
-            menu.setAttribute("aria-hidden", "true"); // Return focus to the toggle button after closing
-            (toggle as HTMLElement).focus();
-          }
-        }); // Close menu when clicking outside
-
-        document.addEventListener("click", (event) => {
-          if (
-            menu &&
-            toggle &&
-            !toggle.contains(event.target as Node) &&
-            !menu.contains(event.target as Node) &&
-            !menu.classList.contains("opacity-0")
-          ) {
-            toggle.click(); // Simulate a click on the toggle to close
-          }
-        }); // Trap focus inside menu when open
-
-        menu.addEventListener("keydown", (event) => {
-          if (event.key === "Tab" && !menu.classList.contains("opacity-0")) {
-            const focusableElements = Array.from(
-              menu.querySelectorAll('a[role="menuitem"]')
-            ) as HTMLElement[];
-            const first = focusableElements[0];
-            const last = focusableElements[focusableElements.length - 1];
-
-            if (event.shiftKey) {
-              // Shift + Tab
-              if (document.activeElement === first) {
-                last.focus();
-                event.preventDefault();
-              }
-            } else {
-              // Tab
-              if (document.activeElement === last) {
-                first.focus();
-                event.preventDefault();
-              }
-            }
-          }
-        });
+          </div>
+        )
       }
-    </script>
-  </body>
-</html>
+      <div>
+        {/* Tool Card: Records - Only visible if authenticated */}
+        <a
+          href="/records"
+          class="block bg-gradient-to-br from-orange-200 to-pink-300 p-6 rounded-lg shadow-md text-center
+        hover:from-orange-300 hover:to-pink-400 hover:shadow-lg transform hover:-translate-y-1 transition duration-300
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          aria-label="Go to Baby Timer page"
+        >
+          <h3 class="text-2xl font-bold text-orange-800 mb-2">
+            Views Feeding Records
+          </h3>
+        </a>
+      </div>
+      {
+        /* Other Tool Cards (Tips, Music, Videos, Books) - Always visible, but might redirect to signin if not authenticated and trying to access data */
+      }
+      <a
+        href="/tips"
+        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        aria-label="View daily parenting tips"
+      >
+        <h3 class="text-2xl font-bold mb-2">Tips of the Day</h3>
+        <p class="text-md">Daily wisdom for your parenting journey.</p>
+      </a>
+
+      <a
+        href="/music"
+        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        aria-label="Access calming music for baby and parent"
+      >
+        <h3 class="text-2xl font-bold mb-2">Music</h3>
+        <p class="text-md">Soothing sounds for peaceful moments.</p>
+      </a>
+
+      <a
+        href="/videos"
+        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        aria-label="Watch helpful and calming videos"
+      >
+        <h3 class="text-2xl font-bold mb-2">Videos</h3>
+        <p class="text-md">Visual guides and relaxing scenes.</p>
+      </a>
+
+      <a
+        href="/books"
+        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        aria-label="Browse recommended books for new parents"
+      >
+        <h3 class="text-2xl font-bold mb-2">Books</h3>
+        <p class="text-md">Recommended reads for new parents.</p>
+      </a>
+    </div>
+  </section>
+</Layout>

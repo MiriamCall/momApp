@@ -1,0 +1,153 @@
+---
+// src/components/NavBar.astro
+interface Props {
+  isAuthenticated: boolean;
+}
+
+const { isAuthenticated } = Astro.props;
+---
+
+<nav
+  aria-label="Main Navigation"
+  class="fixed bottom-4 right-4 z-50 flex flex-col items-end"
+>
+  <div
+    id="menu"
+    class="flex flex-col items-end space-y-3 mb-4
+    opacity-0 pointer-events-none transform translate-y-0
+    transition-all duration-300 ease-in-out"
+    role="menu"
+    aria-orientation="vertical"
+    aria-hidden="true"
+  >
+    <a
+      href="/"
+      class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">Home</a
+    >
+    {
+      isAuthenticated && (
+        <a
+          href="/feeding_timer"
+          class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+          role="menuitem"
+        >
+          Timer
+        </a>
+      )
+    }
+    <a
+      href="/tips"
+      class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">Tips</a
+    >
+    <a
+      href="/music"
+      class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">Music</a
+    >
+    <a
+      href="/videos"
+      class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">Videos</a
+    >
+    <a
+      href="/books"
+      class="text-peach-600 bg-white px-4 py-2 rounded-full shadow-md hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">Books</a
+    >
+  </div>
+
+  <button
+    id="menuToggle"
+    class="bg-rose-500 hover:bg-peach-600 text-white p-4 rounded-full shadow-lg
+    transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+    aria-expanded="false"
+    aria-controls="menu"
+    aria-label="Open main menu"
+  >
+    <svg
+      class="w-8 h-8 transition-transform duration-300"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+</nav>
+
+<script>
+  // src/components/NavBar.astro script
+  const toggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+  const toggleIconPath = toggle ? toggle.querySelector("svg path") : null;
+
+  if (toggle && menu && toggleIconPath) {
+    toggle.addEventListener("click", () => {
+      const isMenuHidden = menu.classList.contains("opacity-0"); // Toggle menu visibility and animation
+
+      menu.classList.toggle("opacity-0");
+      menu.classList.toggle("pointer-events-none");
+      menu.classList.toggle("translate-y-[-100%]"); // Adjust if menu height changes
+      menu.classList.toggle("translate-y-0"); // Toggle hamburger to X icon animation
+
+      if (isMenuHidden) {
+        // If menu is currently hidden (and will be shown)
+        toggleIconPath.setAttribute("d", "M6 18L18 6M6 6l12 12"); // To X
+        toggle.setAttribute("aria-expanded", "true");
+        menu.setAttribute("aria-hidden", "false"); // Focus the first item in the menu when opened for keyboard users
+        const firstMenuItem = menu.querySelector('a[role="menuitem"]');
+        if (firstMenuItem) {
+          (firstMenuItem as HTMLElement).focus();
+        }
+      } else {
+        // If menu is currently visible (and will be hidden)
+        toggleIconPath.setAttribute("d", "M4 6h16M4 12h16M4 18h16"); // Back to hamburger
+        toggle.setAttribute("aria-expanded", "false");
+        menu.setAttribute("aria-hidden", "true"); // Return focus to the toggle button after closing
+        (toggle as HTMLElement).focus();
+      }
+    }); // Close menu when clicking outside
+
+    document.addEventListener("click", (event) => {
+      if (
+        menu &&
+        toggle &&
+        !toggle.contains(event.target as Node) &&
+        !menu.contains(event.target as Node) &&
+        !menu.classList.contains("opacity-0")
+      ) {
+        toggle.click(); // Simulate a click on the toggle to close
+      }
+    }); // Trap focus inside menu when open
+
+    menu.addEventListener("keydown", (event) => {
+      if (event.key === "Tab" && !menu.classList.contains("opacity-0")) {
+        const focusableElements = Array.from(
+          menu.querySelectorAll('a[role="menuitem"]')
+        ) as HTMLElement[];
+        const first = focusableElements[0];
+        const last = focusableElements[focusableElements.length - 1];
+
+        if (event.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === first) {
+            last.focus();
+            event.preventDefault();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === last) {
+            first.focus();
+            event.preventDefault();
+          }
+        }
+      }
+    });
+  }
+</script>
