@@ -13,10 +13,10 @@ const { isAuthenticated } = Astro.props;
 >
   <div
     id="menu"
-    class="absolute bottom-full right-0 mb-4 flex flex-col items-end space-y-3
+    class="absolute bottom-full right-0 mb-4 flex flex-col items-start space-y-3
     opacity-0 pointer-events-none max-h-0 overflow-hidden
     transition-all duration-300 ease-in-out
-    bg-white rounded-xl shadow-lg border border-peach-200 p-4"
+    bg-white rounded-xl shadow-lg border border-peach-200 p-4 min-w-[160px]"
     role="menu"
     aria-orientation="vertical"
     aria-hidden="true"
@@ -28,20 +28,29 @@ const { isAuthenticated } = Astro.props;
     >
     {
       isAuthenticated && (
-        <a
-          href="/feeding_timer"
-          class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem"
-        >
-          Timer
-        </a>
-        <a
-          href="/feeding_timer"
-          class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-          role="menuitem"
-        >
-          Records
-        </a>
+        <>
+          <a
+            href="/dashboard"
+            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            role="menuitem"
+          >
+            Dashboard
+          </a>
+          <a
+            href="/feeding_timer"
+            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            role="menuitem"
+          >
+            Timer
+          </a>
+          <a
+            href="/records"
+            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            role="menuitem"
+          >
+            Records
+          </a>
+        </>
       )
     }
     <a
@@ -64,6 +73,41 @@ const { isAuthenticated } = Astro.props;
       class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
       role="menuitem">Books</a
     >
+    {
+      isAuthenticated && (
+        <form action="/api/auth/signout" method="get" class="inline-block">
+          {" "}
+          {/* Added inline-block to form */}
+          <button
+            type="submit"
+            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            role="menuitem"
+          >
+            Sign Out
+          </button>
+        </form>
+      )
+    }
+    {
+      !isAuthenticated && (
+        <>
+          <a
+            href="/signin"
+            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            role="menuitem"
+          >
+            Sign In
+          </a>
+          <a
+            href="/register"
+            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            role="menuitem"
+          >
+            Register
+          </a>
+        </>
+      )
+    }
   </div>
 
   <button
@@ -168,6 +212,7 @@ const { isAuthenticated } = Astro.props;
   document.addEventListener("astro:page-load", () => {
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll("#menu a");
+    const signOutButton = document.querySelector("#menu form button"); // Get the sign out button
 
     navLinks.forEach((link) => {
       // Remove existing active classes from all links
@@ -195,5 +240,25 @@ const { isAuthenticated } = Astro.props;
         );
       }
     });
+
+    // Handle active styling for the sign out button if it exists and is on the signout page (though usually it's just a trigger)
+    if (signOutButton && currentPath === "/api/auth/signout") {
+      signOutButton.classList.add(
+        "bg-rose-50",
+        "text-rose-700",
+        "font-bold",
+        "border-2",
+        "border-rose-500"
+      );
+    } else if (signOutButton) {
+      // Ensure sign out button doesn't have active styles when not on its 'page'
+      signOutButton.classList.remove(
+        "bg-rose-50",
+        "text-rose-700",
+        "font-bold",
+        "border-2",
+        "border-rose-500"
+      );
+    }
   });
 </script>
