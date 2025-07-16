@@ -73,6 +73,16 @@ const { isAuthenticated } = Astro.props;
       class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
       role="menuitem">Books</a
     >
+    <a
+      href="/about"
+      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">About</a
+    >
+    <a
+      href="/contact"
+      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+      role="menuitem">Contact</a
+    >
     {
       isAuthenticated && (
         <form action="/api/auth/signout" method="get" class="inline-block">
