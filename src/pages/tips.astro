@@ -1,67 +1,137 @@
-<!DOCTYPE html>
-<link rel="stylesheet" href="/src/styles/global.css">
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mother's Tips – Newborn Feeding & Nursing</title>
-    <link rel="stylesheet" href="/styles.css" /> 
-  </head>
-  <body class="font-sans antialiased bg-gradient-to-br from-pink-50 to-purple-50 text-gray-800 min-h-screen flex flex-col">
-    <header class="bg-white shadow-md py-6 px-4 mb-8">
-      <h1 class="text-4xl font-extrabold text-center text-pink-600 sm:text-5xl">Mother’s Tips for Newborn Feeding & Nursing</h1>
-    </header>
+---
+// src/pages/tips.astro
+import Layout from "../layouts/Layout.astro";
+---
 
-    <main class="container mx-auto px-4 py-8 flex-grow grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">1. Get Comfortable Before Nursing</h2>
-        <p class="text-gray-700 leading-relaxed">Use pillows to support your back and arms. A nursing pillow under your baby can make a huge difference in comfort and positioning.</p>
-      </div>
+<Layout title="Mother's Tips – Newborn Feeding & Nursing">
+  <header class="bg-white shadow-md py-6 px-4 mb-8">
+    <h1 class="text-4xl font-extrabold text-center text-pink-600 sm:text-5xl">
+      Mother’s Tips for Newborn Feeding & Nursing
+    </h1>
+  </header>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">2. Try Different Nursing Positions</h2>
-        <p class="text-gray-700 leading-relaxed">Experiment with cradle, football, and side-lying holds to see what works best for both you and baby—especially during nighttime feeds.</p>
-      </div>
+  <main
+    class="container mx-auto px-4 py-8 flex-grow grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+  >
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        1. Get Comfortable Before Nursing
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Use pillows to support your back and arms. A nursing pillow under your
+        baby can make a huge difference in comfort and positioning.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">3. Look for Feeding Cues</h2>
-        <p class="text-gray-700 leading-relaxed">Watch for signs like rooting, sucking motions, or hands to mouth. Don’t wait for crying—it’s a late sign of hunger.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        2. Try Different Nursing Positions
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Experiment with cradle, football, and side-lying holds to see what works
+        best for both you and baby—especially during nighttime feeds.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">4. Burp Mid-Feeding</h2>
-        <p class="text-gray-700 leading-relaxed">Pause to burp your baby halfway through a feeding, especially if bottle-feeding. This helps release trapped air and reduce spit-ups.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        3. Look for Feeding Cues
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Watch for signs like rooting, sucking motions, or hands to mouth. Don’t
+        wait for crying—it’s a late sign of hunger.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">5. Use Gentle Pats for Burping</h2>
-        <p class="text-gray-700 leading-relaxed">Pat gently on the back while baby rests on your shoulder or sits in your lap with chin supported. Every baby prefers something slightly different.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        4. Burp Mid-Feeding
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Pause to burp your baby halfway through a feeding, especially if
+        bottle-feeding. This helps release trapped air and reduce spit-ups.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">6. Keep Baby Upright After Feeding</h2>
-        <p class="text-gray-700 leading-relaxed">Hold your baby upright for 15–20 minutes after feeding to help with digestion and reduce reflux.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        5. Use Gentle Pats for Burping
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Pat gently on the back while baby rests on your shoulder or sits in your
+        lap with chin supported. Every baby prefers something slightly
+        different.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">7. Watch for a Good Latch</h2>
-        <p class="text-gray-700 leading-relaxed">A good latch should feel like a tug, not a pinch. Baby’s mouth should cover most of the areola, not just the nipple.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        6. Keep Baby Upright After Feeding
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Hold your baby upright for 15–20 minutes after feeding to help with
+        digestion and reduce reflux.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">8. Stay Hydrated & Nourished</h2>
-        <p class="text-gray-700 leading-relaxed">Keep a water bottle and snacks nearby during nursing sessions. Your body needs fuel to make milk and recover.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        7. Watch for a Good Latch
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        A good latch should feel like a tug, not a pinch. Baby’s mouth should
+        cover most of the areola, not just the nipple.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">9. Track Feedings if Helpful</h2>
-        <p class="text-gray-700 leading-relaxed">Use a notebook or baby tracking app to log feeding times and which side you last used. This can help during those sleepy early days.</p>
-      </div>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        8. Stay Hydrated & Nourished
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Keep a water bottle and snacks nearby during nursing sessions. Your body
+        needs fuel to make milk and recover.
+      </p>
+    </div>
 
-      <div class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg">
-        <h2 class="text-2xl font-bold text-indigo-700 mb-2">10. Give Yourself Grace</h2>
-        <p class="text-gray-700 leading-relaxed">Every mom and baby are different. If things don’t go perfectly, you’re still doing a great job. Reach out for help when needed.</p>
-      </div>
-    </main>
-  </body>
-</html>
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        9. Track Feedings if Helpful
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Use a notebook or baby tracking app to log feeding times and which side
+        you last used. This can help during those sleepy early days.
+      </p>
+    </div>
+
+    <div
+      class="tip bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-indigo-700 mb-2">
+        10. Give Yourself Grace
+      </h2>
+      <p class="text-gray-700 leading-relaxed">
+        Every mom and baby are different. If things don’t go perfectly, you’re
+        still doing a great job. Reach out for help when needed.
+      </p>
+    </div>
+  </main>
+</Layout>
