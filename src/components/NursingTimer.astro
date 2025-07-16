@@ -74,7 +74,7 @@ const { userId, accessToken } = Astro.props;
 
 <!-- ✅ Pass both userId and accessToken to the script -->
 <script type="module" define:vars={{ userId, accessToken }}>
-  import { initNursingTimer } from "../../src/scripts/nursingTimer";
+  import { initNursingTimer } from "/scripts/nursingTimer.js";
 
   initNursingTimer({ userId, accessToken });
 </script>

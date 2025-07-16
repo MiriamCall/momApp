@@ -1,0 +1,280 @@
+<!-- ---
+// src/components/NursingTimer.astro
+
+interface Props {
+  userId: string;
+  accessToken: string;
+}
+
+const { userId, accessToken } = Astro.props;
+---
+
+<div
+  class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-auto border border-peach-200"
+>
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-peach-700 mb-4">Current Session</h2>
+    <div class="text-5xl font-mono text-gray-800 mb-4" id="timerDisplay">
+      00:00:00
+    </div>
+    <div class="flex justify-center gap-4 mb-6">
+      <button
+        id="startButton"
+        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+      >
+        Start
+      </button>
+      <button
+        id="stopButton"
+        class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        disabled
+      >
+        Stop
+      </button>
+      <button
+        id="resetButton"
+        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        disabled
+      >
+        Reset
+      </button>
+    </div>
+
+    <div class="flex justify-center gap-4 mb-6">
+      <button
+        id="leftSideButton"
+        class="side-button bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+        data-side="left"
+      >
+        Left Side
+      </button>
+      <button
+        id="rightSideButton"
+        class="side-button bg-purple-400 hover:bg-purple-500 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400"
+        data-side="right"
+      >
+        Right Side
+      </button>
+    </div>
+
+    <p id="selectedSide" class="text-lg font-medium text-gray-700 mb-4">
+      Side: Not Selected
+    </p>
+
+    <button
+      id="saveButton"
+      class="w-full bg-rose-500 hover:bg-peach-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+      disabled
+    >
+      Save Nursing Session
+    </button>
+    <p id="saveMessage" class="text-sm mt-2 text-red-500"></p>
+  </div>
+</div>
+
+<script type="module" define:vars={{ userId, accessToken }}>
+  // Import Supabase client directly here
+  import { createClient } from "@supabase/supabase-js";
+
+  // Use the passed-in userId and accessToken directly
+  // const { userId, accessToken } = Astro.props; // No longer needed directly here, define:vars handles it
+
+  const supabaseClient = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    }
+  );
+
+  const timerDisplay = document.getElementById("timerDisplay");
+  const startButton = document.getElementById("startButton");
+  const stopButton = document.getElementById("stopButton");
+  const resetButton = document.getElementById("resetButton");
+  const leftSideButton = document.getElementById("leftSideButton");
+  const rightSideButton = document.getElementById("rightSideButton");
+  const selectedSideDisplay = document.getElementById("selectedSide");
+  const saveButton = document.getElementById("saveButton");
+  const saveMessage = document.getElementById("saveMessage");
+
+  let timerInterval;
+  let seconds = 0;
+  let selectedSide = null;
+  let startTime = null;
+  let endTime = null;
+
+  function formatTime(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const remainingSeconds = totalSeconds % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(remainingSeconds).padStart(2, "0")}`;
+  }
+
+  function startTimer() {
+    if (
+      !startButton ||
+      !stopButton ||
+      !resetButton ||
+      !saveButton ||
+      !saveMessage ||
+      !timerDisplay
+    )
+      return;
+
+    startButton.disabled = true;
+    stopButton.disabled = false;
+    resetButton.disabled = true;
+    saveButton.disabled = true;
+    saveMessage.textContent = "";
+
+    startTime = new Date();
+
+    timerInterval = window.setInterval(() => {
+      seconds++;
+      if (timerDisplay) {
+        timerDisplay.textContent = formatTime(seconds);
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (!startButton || !stopButton || !resetButton || !saveButton) return;
+
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = false;
+    clearInterval(timerInterval);
+    endTime = new Date();
+    if (selectedSide && seconds > 0) saveButton.disabled = false;
+  }
+
+  function resetTimer() {
+    if (
+      !timerDisplay ||
+      !resetButton ||
+      !saveButton ||
+      !selectedSideDisplay ||
+      !leftSideButton ||
+      !rightSideButton ||
+      !saveMessage
+    )
+      return;
+
+    stopTimer();
+    seconds = 0;
+    timerDisplay.textContent = formatTime(seconds);
+    resetButton.disabled = true;
+    saveButton.disabled = true;
+    selectedSide = null;
+    startTime = null;
+    endTime = null;
+    selectedSideDisplay.textContent = "Side: Not Selected";
+    leftSideButton.classList.remove(
+      "ring-2",
+      "ring-offset-2",
+      "ring-peach-500"
+    );
+    rightSideButton.classList.remove(
+      "ring-2",
+      "ring-offset-2",
+      "ring-peach-500"
+    );
+    saveMessage.textContent = "";
+  }
+
+  function selectSide(side) {
+    if (
+      !selectedSideDisplay ||
+      !leftSideButton ||
+      !rightSideButton ||
+      !saveButton
+    )
+      return;
+
+    selectedSide = side;
+    selectedSideDisplay.textContent = `Side: ${
+      side.charAt(0).toUpperCase() + side.slice(1)
+    }`;
+
+    leftSideButton.classList.toggle("ring-2", side === "left");
+    leftSideButton.classList.toggle("ring-offset-2", side === "left");
+    leftSideButton.classList.toggle("ring-peach-500", side === "left"); // Ensure peach color only on selected
+    leftSideButton.classList.toggle("ring-blue-400", side !== "left"); // Restore original ring color
+
+    rightSideButton.classList.toggle("ring-2", side === "right");
+    rightSideButton.classList.toggle("ring-offset-2", side === "right");
+    rightSideButton.classList.toggle("ring-peach-500", side === "right"); // Ensure peach color only on selected
+    rightSideButton.classList.toggle("ring-purple-400", side !== "right"); // Restore original ring color
+
+    if (stopButton?.disabled && seconds > 0) saveButton.disabled = false;
+  }
+
+  // Add event listeners only after the DOM is fully loaded, or ensure the script is at the end of body.
+  // In Astro components, scripts run after the component's HTML is rendered.
+  startButton?.addEventListener("click", startTimer);
+  stopButton?.addEventListener("click", stopTimer);
+  resetButton?.addEventListener("click", resetTimer);
+  leftSideButton?.addEventListener("click", () => selectSide("left"));
+  rightSideButton?.addEventListener("click", () => selectSide("right"));
+
+  saveButton?.addEventListener("click", async () => {
+    if (!saveMessage || !saveButton) return;
+
+    if (seconds === 0) {
+      saveMessage.textContent =
+        "Timer is at 0. Start and stop the timer before saving.";
+      return;
+    }
+    if (!selectedSide) {
+      saveMessage.textContent =
+        "Please select a side (Left or Right) before saving.";
+      return;
+    }
+    if (!startTime || !endTime) {
+      saveMessage.textContent =
+        "Timer was not started or stopped correctly. Please reset and try again.";
+      return;
+    }
+
+    saveButton.disabled = true;
+    saveMessage.textContent = "Saving session...";
+
+    try {
+      const { error } = await supabaseClient.from("nursing_sessions").insert([
+        {
+          user_id: userId,
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+          duration_seconds: seconds,
+          nursing_side: selectedSide,
+        },
+      ]);
+
+      if (error) {
+        saveMessage.textContent = `Error saving: ${error.message}`;
+        saveButton.disabled = false;
+      } else {
+        saveMessage.textContent = "Session saved successfully!";
+        resetTimer();
+        // A full page reload is often the simplest way to refresh data for vanilla JS components
+        // For more advanced SPAs, you'd trigger an event or re-fetch data without reload.
+        setTimeout(() => window.location.reload(), 800);
+      }
+    } catch (err) {
+      saveMessage.textContent = `Unexpected error: ${err.message}`;
+      saveButton.disabled = false;
+    }
+  });
+
+  // Initial state of buttons
+  if (stopButton) stopButton.disabled = true;
+  if (resetButton) resetButton.disabled = true;
+  if (saveButton) saveButton.disabled = true;
+</script> -->
