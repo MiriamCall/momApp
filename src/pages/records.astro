@@ -32,8 +32,9 @@ const { data: nursingSessions, error: dbError } = await supabase
   .select("*")
   .order("start_time", { ascending: false }); // Show most recent first
 
-// Helper function to format duration - removed type annotation
+// Helper function to format duration
 const formatDuration = (seconds) => {
+  // Removed type annotation for consistency with user's previous request
   if (seconds < 60) return `${seconds}s`;
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -108,9 +109,40 @@ const formatDuration = (seconds) => {
         </h2>
         <form id="edit-session-form" class="space-y-4">
           <input type="hidden" id="edit-session-id" name="id" />
-          <input type="hidden" id="edit-nursing-side" name="nursing_side" />
-          <input type="hidden" id="edit-start-time" name="start_time" />
+          <!-- Removed hidden for nursing_side and start_time as they are now editable -->
 
+          <div>
+            <label
+              for="edit-nursing-side-select"
+              class="block text-gray-700 text-left mb-2">Nursing Side</label
+            >
+            <select
+              id="edit-nursing-side-select"
+              name="nursing_side"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+            >
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              for="edit-start-time-input"
+              class="block text-gray-700 text-left mb-2">Start Time</label
+            >
+            <input
+              type="datetime-local"
+              id="edit-start-time-input"
+              name="start_time"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              required
+            />
+          </div>
+
+          <h3 class="text-lg font-semibold text-gray-800 mt-4 mb-2">
+            Duration
+          </h3>
           <div>
             <label for="edit-hours" class="block text-gray-700 text-left mb-2"
               >Hours</label
@@ -182,14 +214,20 @@ const formatDuration = (seconds) => {
               data-session-id={session.id}
             >
               <div>
-                <p class="font-semibold text-gray-800">
+                <p
+                  class="font-semibold text-gray-800"
+                  data-start-time-display={session.start_time}
+                >
                   {new Date(session.start_time).toLocaleString("en-US", {
                     dateStyle: "medium",
                     timeStyle: "short",
                   })}
                 </p>
                 <p class="text-sm text-gray-600">
-                  <span class="font-bold capitalize">
+                  <span
+                    class="font-bold capitalize"
+                    data-nursing-side-display={session.nursing_side}
+                  >
                     {session.nursing_side} Side
                   </span>
                   {" for "}
@@ -199,6 +237,8 @@ const formatDuration = (seconds) => {
                   >
                     {formatDuration(session.duration_seconds)}
                   </span>
+                  <span class="text-xs text-gray-500 ml-1">(Duration)</span>{" "}
+                  {/* Added label here */}
                 </p>
               </div>
               <div class="flex gap-2">
@@ -239,7 +279,7 @@ const formatDuration = (seconds) => {
   // Import the new functions from recordActions.js
   import { updateRecord, deleteRecord } from "/scripts/recordActions.js";
 
-  // Helper function to format duration (removed type annotation)
+  // Helper function to format duration (defined once globally for the script)
   const formatDurationLocal = (seconds) => {
     if (seconds < 60) return `${seconds}s`;
     const minutes = Math.floor(seconds / 60);
@@ -349,8 +389,10 @@ const formatDuration = (seconds) => {
   const editModalContainer = document.getElementById("edit-modal-container");
   const editSessionForm = document.getElementById("edit-session-form");
   const editSessionIdInput = document.getElementById("edit-session-id");
-  const editNursingSideInput = document.getElementById("edit-nursing-side");
-  const editStartTimeInput = document.getElementById("edit-start-time");
+  const editNursingSideSelect = document.getElementById(
+    "edit-nursing-side-select"
+  ); // Changed ID
+  const editStartTimeInput = document.getElementById("edit-start-time-input"); // Changed ID
   const editHoursInput = document.getElementById("edit-hours");
   const editMinutesInput = document.getElementById("edit-minutes");
   const editSecondsInput = document.getElementById("edit-seconds");
@@ -360,7 +402,7 @@ const formatDuration = (seconds) => {
     if (
       !editModalContainer ||
       !editSessionIdInput ||
-      !editNursingSideInput ||
+      !editNursingSideSelect ||
       !editStartTimeInput ||
       !editHoursInput ||
       !editMinutesInput ||
@@ -371,8 +413,11 @@ const formatDuration = (seconds) => {
     }
 
     editSessionIdInput.value = sessionId;
-    editNursingSideInput.value = nursingSide;
-    editStartTimeInput.value = startTime;
+    editNursingSideSelect.value = nursingSide; // Set selected option
+
+    // Format start time for datetime-local input
+    const formattedStartTime = new Date(startTime).toISOString().slice(0, 16);
+    editStartTimeInput.value = formattedStartTime;
 
     // Convert total seconds to hours, minutes, seconds for autofill
     const hours = Math.floor(durationSeconds / 3600);
@@ -404,8 +449,8 @@ const formatDuration = (seconds) => {
       event.preventDefault(); // Prevent default form submission
 
       const sessionId = editSessionIdInput.value;
-      const nursingSide = editNursingSideInput.value;
-      const startTime = editStartTimeInput.value;
+      const newNursingSide = editNursingSideSelect.value; // Get new side
+      const newStartTime = editStartTimeInput.value; // Get new start time
 
       const hours = parseInt(editHoursInput.value) || 0;
       const minutes = parseInt(editMinutesInput.value) || 0;
@@ -428,28 +473,50 @@ const formatDuration = (seconds) => {
         return;
       }
 
-      // Call the external updateRecord function
+      // Call the external updateRecord function with new side and start time
       const result = await updateRecord(
         sessionId,
         newDurationSeconds,
-        nursingSide,
-        startTime,
+        newNursingSide,
+        newStartTime,
         userId,
         accessToken
       );
 
       if (result.success) {
-        // Update the duration display in the specific list item
+        // Update the duration, side, and start time display in the specific list item
         const listItem = document.querySelector(
           `li[data-session-id="${sessionId}"]`
         );
         const durationSpan = listItem?.querySelector(
           "span[data-duration-display]"
         );
+        const sideSpan = listItem?.querySelector(
+          "span[data-nursing-side-display]"
+        );
+        const startTimeDisplay = listItem?.querySelector(
+          "p[data-start-time-display]"
+        );
+
         if (durationSpan) {
           durationSpan.textContent = formatDurationLocal(newDurationSeconds);
           durationSpan.dataset.durationDisplay = newDurationSeconds.toString(); // Update data attribute as well
         }
+        if (sideSpan) {
+          sideSpan.textContent = newNursingSide;
+          sideSpan.dataset.nursingSideDisplay = newNursingSide;
+        }
+        if (startTimeDisplay) {
+          startTimeDisplay.textContent = new Date(newStartTime).toLocaleString(
+            "en-US",
+            {
+              dateStyle: "medium",
+              timeStyle: "short",
+            }
+          );
+          startTimeDisplay.dataset.startTimeDisplay = newStartTime;
+        }
+
         showMessage(result.message, "success");
         hideEditModal(); // Hide the modal after successful update
       } else {
@@ -464,7 +531,7 @@ const formatDuration = (seconds) => {
 
     if (recordsList) {
       recordsList.addEventListener("click", async (event) => {
-        const target = event.target; // Removed type assertion
+        const target = event.target; // Removed type assertion for consistency with user's previous request
 
         // Handle Delete button click
         if (target.classList.contains("delete-btn")) {
