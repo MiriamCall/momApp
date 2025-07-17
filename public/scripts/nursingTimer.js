@@ -1,22 +1,104 @@
 // public/scripts/nursingTimer.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-export function initNursingTimer({ userId, accessToken }) {
-  // --- Supabase Client Setup ---
-  const supabaseClient = createClient(
-    "https://nbjicydejhujbharetbk.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iamljeWRlamh1amJoYXJldGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3Mzk0OTQsImV4cCI6MjA2NzMxNTQ5NH0.ew6OfER-EfHZJbfb5cchQ3CNqxyEHmI08g5R0bkMyOM",
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+// Declare supabaseClient at the top level of the module
+// It will be initialized once and reused.
+let supabaseClient = null;
+
+/**
+ * Initializes the Supabase client with the provided access token.
+ * This function is now exported to ensure explicit module structure,
+ * though it's primarily used internally by other exported functions.
+ * @param {string} accessToken - The user's access token.
+ * @returns {object} The Supabase client instance.
+ */
+export function initializeSupabaseClient(accessToken) {
+  if (!supabaseClient) {
+    supabaseClient = createClient(
+      "https://nbjicydejhujbharetbk.supabase.co", // Your Supabase Project URL
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iamljeWRlamh1amJoYXJldGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3Mzk0OTQsImV4cCI6MjA2NzMxNTQ5NH0.ew6OfER-EfHZJbfb5cchQ3CNqxyEHmI08g5R0bkMyOM", // Your Supabase Anon Key
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Crucial for RLS
+          },
         },
-      },
+      }
+    );
+    console.log(
+      "Supabase client initialized in nursingTimer.js with access token."
+    );
+  }
+  return supabaseClient;
+}
+
+/**
+ * Inserts a new nursing session into the database manually.
+ * @param {string} nursingSide - The side used for nursing ('left' or 'right').
+ * @param {string} startTime - The start time of the session (ISO string or datetime-local format).
+ * @param {number} durationSeconds - The duration of the session in seconds.
+ * @param {string} userId - The ID of the user creating the session.
+ * @param {string} accessToken - The user's access token for authentication.
+ * @returns {Promise<{success: boolean, message: string}>} Result of the operation.
+ */
+export async function insertManualNursingSession(
+  nursingSide,
+  startTime,
+  durationSeconds,
+  userId,
+  accessToken
+) {
+  // Use the exported client initialization function
+  const client = initializeSupabaseClient(accessToken);
+
+  console.log("Attempting to manually insert nursing session:");
+  console.log("User ID:", userId);
+  console.log("Side:", nursingSide);
+  console.log("Start Time:", startTime);
+  console.log("Duration:", durationSeconds);
+
+  try {
+    // Calculate end_time based on start_time and duration_seconds
+    const startDateTime = new Date(startTime);
+    const endDateTime = new Date(
+      startDateTime.getTime() + durationSeconds * 1000
+    );
+
+    const { error } = await client.from("nursing_sessions").insert({
+      user_id: userId,
+      nursing_side: nursingSide,
+      start_time: startDateTime.toISOString(),
+      end_time: endDateTime.toISOString(),
+      duration_seconds: durationSeconds,
+    });
+
+    if (error) {
+      console.error("Supabase Error inserting manual session:", error.message);
+      return {
+        success: false,
+        message: `Failed to add session: ${error.message}`,
+      };
+    } else {
+      console.log("Manual session inserted successfully!");
+      return { success: true, message: "Session added successfully!" };
     }
-  );
+  } catch (error) {
+    console.error(
+      "An unexpected error occurred during manual session insertion:",
+      error
+    );
+    return {
+      success: false,
+      message: "An unexpected error occurred during session creation.",
+    };
+  }
+}
+
+export function initNursingTimer({ userId, accessToken }) {
+  // Initialize Supabase client using the shared function
+  const supabase = initializeSupabaseClient(accessToken);
 
   // --- DOM Element References ---
-  // Using type assertions only if you're using TypeScript, otherwise remove ': HTMLElement' parts.
   const timerDisplay = document.getElementById("timerDisplay");
   const startButton = document.getElementById("startButton");
   const stopButton = document.getElementById("stopButton");
@@ -28,7 +110,6 @@ export function initNursingTimer({ userId, accessToken }) {
   const saveMessage = document.getElementById("saveMessage");
 
   // --- Early exit if critical elements are missing ---
-  // This makes the script more robust if the HTML structure changes.
   if (
     !timerDisplay ||
     !startButton ||
@@ -211,7 +292,7 @@ export function initNursingTimer({ userId, accessToken }) {
     };
 
     try {
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from("nursing_sessions")
         .insert([sessionData]);
 
