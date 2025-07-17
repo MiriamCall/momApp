@@ -97,7 +97,7 @@ const isAuthenticated = !!session;
       id="tools-heading"
       class="text-3xl font-bold text-peach-700 text-center mb-8 md:text-4xl"
     >
-      Explore Our Tools
+      Explore Resources
     </h2>
 
     <div
@@ -109,7 +109,7 @@ const isAuthenticated = !!session;
             {/* Tool Card: Timer - Only visible if authenticated */}
             <a
               href="/feeding_timer"
-              class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+              class="block w-full bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 h-[160px] flex flex-col justify-center items-center"
               aria-label="Go to Baby Timer page"
             >
               <h3 class="text-2xl font-bold mb-2">Timer</h3>
@@ -118,23 +118,28 @@ const isAuthenticated = !!session;
           </div>
         )
       }
-      <div>
-        {/* Tool Card: Records - Only visible if authenticated */}
-        <a
-          href="/records"
-          class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-          aria-label="Go to Baby Timer page"
-        >
-          <h3 class="text-2xl font-bold mb-2">Views Feeding Records</h3>
-          <p class="text-md">Access and manage all your baby's feeding logs.</p>
-        </a>
-      </div>
+
+      {
+        isAuthenticated && (
+          <div>
+            {/* Tool Card: Records - Only visible if authenticated */}
+            <a
+              href="/records"
+              class="block w-full bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 h-[160px] flex flex-col justify-center items-center"
+              aria-label="Go to Baby Timer page"
+            >
+              <h3 class="text-2xl font-bold mb-2">Views Feeding Records</h3>
+              <p class="text-md">Manage all your baby's feeding logs.</p>
+            </a>
+          </div>
+        )
+      }
       {
         /* Other Tool Cards (Tips, Music, Videos, Books) - Always visible, but might redirect to signin if not authenticated and trying to access data */
       }
       <a
         href="/tips"
-        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        class="block w-full bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 h-[160px] flex flex-col justify-center items-center"
         aria-label="View daily parenting tips"
       >
         <h3 class="text-2xl font-bold mb-2">Tips of the Day</h3>
@@ -143,7 +148,7 @@ const isAuthenticated = !!session;
 
       <a
         href="/music"
-        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        class="block w-full bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 h-[160px] flex flex-col justify-center items-center"
         aria-label="Access calming music for baby and parent"
       >
         <h3 class="text-2xl font-bold mb-2">Music</h3>
@@ -152,7 +157,7 @@ const isAuthenticated = !!session;
 
       <a
         href="/videos"
-        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        class="block w-full bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 h-[160px] flex flex-col justify-center items-center"
         aria-label="Watch helpful and calming videos"
       >
         <h3 class="text-2xl font-bold mb-2">Videos</h3>
@@ -161,7 +166,7 @@ const isAuthenticated = !!session;
 
       <a
         href="/books"
-        class="block w-full max-w-sm bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+        class="block w-full bg-gradient-to-r from-rose-300 to-pink-500 hover:from-rose-400 hover:to-pink-600 text-white font-semibold py-6 px-6 rounded-lg shadow-md text-center transition transform hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 h-[160px] flex flex-col justify-center items-center"
         aria-label="Browse recommended books for new parents"
       >
         <h3 class="text-2xl font-bold mb-2">Books</h3>
