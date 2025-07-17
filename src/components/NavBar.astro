@@ -23,76 +23,281 @@ const { isAuthenticated } = Astro.props;
   >
     <a
       href="/"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">Home</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="Home"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+        ></path>
+      </svg>
+      Home
+    </a>
     {
       isAuthenticated && (
         <>
           <a
             href="/dashboard"
-            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200 "
             role="menuitem"
+            aria-label="Dashboard"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
             Dashboard
           </a>
           <a
             href="/feeding_timer"
-            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200 "
             role="menuitem"
+            aria-label="Timer"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
             Timer
           </a>
           <a
             href="/records"
-            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200 "
             role="menuitem"
+            aria-label="Records"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+              />
+            </svg>
             Records
+          </a>
+
+          <a
+            href="/journal"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200 "
+            role="menuitem"
+            aria-label="Journal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"
+              />
+            </svg>
+            Journal
           </a>
         </>
       )
     }
     <a
       href="/tips"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">Tips</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="Tips"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m15.364 6.364l-.707-.707M6.364 6.364l-.707-.707m12.728 0l-.707.707M6.364 17.636l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+        ></path>
+      </svg>
+      Tips
+    </a>
     <a
       href="/music"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">Music</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="Music"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 19V6l12-3v13M9 19a2 2 0 002 2h2a2 2 0 002-2M9 19a2 2 0 012-2h2a2 2 0 012 2m-3-4h3.5a1.5 1.5 0 000-3H12a1.5 1.5 0 00-1.5 1.5v.5c0 1.033.644 1.936 1.5 2.333V19m4.5-11V6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h2l2.5 2.5L12 16V9.5"
+        ></path>
+      </svg>
+      Music
+    </a>
     <a
       href="/videos"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">Videos</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="Videos"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+        ></path>
+      </svg>
+      Videos
+    </a>
     <a
       href="/books"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">Books</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="Books"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"
+        ></path>
+      </svg>
+      Books
+    </a>
     <a
       href="/about"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">About</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="About"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      About
+    </a>
     <a
       href="/contact"
-      class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
-      role="menuitem">Contact</a
+      class="flex items-center gap-2 text-peach-600 px-4 rounded-full hover:bg-peach-100 transition duration-200"
+      role="menuitem"
+      aria-label="Contact"
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-4 6v4a2 2 0 01-2 2H7a2 2 0 01-2-2v-4m0-4h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v2"
+        ></path>
+      </svg>
+      Contact
+    </a>
     {
       isAuthenticated && (
-        <form action="/api/auth/signout" method="get" class="inline-block">
+        <form
+          action="/api/auth/signout"
+          method="get"
+          class="inline-block w-full"
+        >
           {" "}
-          {/* Added inline-block to form */}
+          {/* Added w-full to form */}
           <button
             type="submit"
-            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200  w-full justify-start"
             role="menuitem"
+            aria-label="Sign Out"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
             Sign Out
           </button>
         </form>
@@ -103,16 +308,46 @@ const { isAuthenticated } = Astro.props;
         <>
           <a
             href="/signin"
-            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200 "
             role="menuitem"
+            aria-label="Sign In"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
             Sign In
           </a>
           <a
             href="/register"
-            class="text-peach-600 px-4 py-2 rounded-full hover:bg-peach-100 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-peach-500"
+            class="flex items-center gap-2 text-peach-600 px-4  rounded-full hover:bg-peach-100 transition duration-200 "
             role="menuitem"
+            aria-label="Register"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM12 14v.01M12 17v.01M12 21v.01M9 19h6"
+              />
+            </svg>
             Register
           </a>
         </>
