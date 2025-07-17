@@ -1,0 +1,64 @@
+---
+// src/pages/records.astro
+import Layout from "../layouts/Layout.astro";
+import { getSupabase } from "../lib/supabaseServer";
+
+const supabase = getSupabase(Astro);
+
+const {
+  data: { session },
+  error,
+} = await supabase.auth.getSession();
+
+if (error || !session) {
+  return Astro.redirect("/signin");
+}
+
+// Fetch the nursing sessions for the authenticated user
+const { data: nursingSessions, error: fetchError } = await supabase
+  .from("nursing_sessions")
+  .select("*")
+  .eq("user_id", session.user.id)
+  .order("start_time", { ascending: false });
+
+if (fetchError) {
+  console.error("Error fetching records:", fetchError);
+}
+---
+
+<Layout title="Nursing Records - Mommy Time">
+  <main class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-peach-700 mb-8 text-center">
+      Nursing Records
+    </h1>
+
+    {
+      nursingSessions && nursingSessions.length > 0 ? (
+        <ul class="space-y-6">
+          {nursingSessions.map((record) => (
+            <li class="bg-white border border-gray-200 rounded-xl shadow p-4">
+              <div class="text-gray-800 font-semibold text-lg">
+                {new Date(record.start_time).toLocaleDateString()} at{" "}
+                {new Date(record.start_time).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+              <div class="text-gray-600 mt-1">
+                Side: <span class="capitalize">{record.nursing_side}</span>
+              </div>
+              <div class="text-gray-600">
+                Duration: {Math.floor(record.duration_seconds / 60)}m{" "}
+                {record.duration_seconds % 60}s
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-center text-gray-500">
+          No nursing records found. Try starting a session on the timer page.
+        </p>
+      )
+    }
+  </main>
+</Layout>

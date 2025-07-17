@@ -1,11 +1,15 @@
 // public/scripts/nursingTimer.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+// Declare supabaseClient at the top level of the module
+// It will be initialized once and reused.
 let supabaseClient = null;
 
 /**
- * Initializes the Supabase client.
- * @param {string} accessToken - The user's JWT.
+ * Initializes the Supabase client with the provided access token.
+ * This function is now exported to ensure explicit module structure,
+ * though it's primarily used internally by other exported functions.
+ * @param {string} accessToken - The user's access token.
  * @returns {object} The Supabase client instance.
  */
 export function initializeSupabaseClient(accessToken) {
@@ -16,23 +20,26 @@ export function initializeSupabaseClient(accessToken) {
       {
         global: {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`, // Crucial for RLS
           },
         },
       }
+    );
+    console.log(
+      "Supabase client initialized in nursingTimer.js with access token."
     );
   }
   return supabaseClient;
 }
 
 /**
- * Inserts a nursing session manually (utility function).
- * @param {string} nursingSide
- * @param {string} startTime
- * @param {number} durationSeconds
- * @param {string} userId
- * @param {string} accessToken
- * @returns {Promise<{success: boolean, message: string}>}
+ * Inserts a new nursing session into the database manually.
+ * @param {string} nursingSide - The side used for nursing ('left' or 'right').
+ * @param {string} startTime - The start time of the session (ISO string or datetime-local format).
+ * @param {number} durationSeconds - The duration of the session in seconds.
+ * @param {string} userId - The ID of the user creating the session.
+ * @param {string} accessToken - The user's access token for authentication.
+ * @returns {Promise<{success: boolean, message: string}>} Result of the operation.
  */
 export async function insertManualNursingSession(
   nursingSide,
@@ -41,8 +48,17 @@ export async function insertManualNursingSession(
   userId,
   accessToken
 ) {
+  // Use the exported client initialization function
   const client = initializeSupabaseClient(accessToken);
+
+  console.log("Attempting to manually insert nursing session:");
+  console.log("User ID:", userId);
+  console.log("Side:", nursingSide);
+  console.log("Start Time:", startTime);
+  console.log("Duration:", durationSeconds);
+
   try {
+    // Calculate end_time based on start_time and duration_seconds
     const startDateTime = new Date(startTime);
     const endDateTime = new Date(
       startDateTime.getTime() + durationSeconds * 1000
@@ -57,64 +73,74 @@ export async function insertManualNursingSession(
     });
 
     if (error) {
-      throw error;
+      console.error("Supabase Error inserting manual session:", error.message);
+      return {
+        success: false,
+        message: `Failed to add session: ${error.message}`,
+      };
+    } else {
+      console.log("Manual session inserted successfully!");
+      return { success: true, message: "Session added successfully!" };
     }
-    return { success: true, message: "Session added successfully!" };
   } catch (error) {
-    console.error("Supabase Error inserting manual session:", error.message);
+    console.error(
+      "An unexpected error occurred during manual session insertion:",
+      error
+    );
     return {
       success: false,
-      message: `Failed to add session: ${error.message}`,
+      message: "An unexpected error occurred during session creation.",
     };
   }
 }
 
-/**
- * Initializes the interactive nursing timer component.
- * @param {{userId: string, accessToken: string}} props
- */
 export function initNursingTimer({ userId, accessToken }) {
+  // Initialize Supabase client using the shared function
   const supabase = initializeSupabaseClient(accessToken);
 
   // --- DOM Element References ---
   const timerDisplay = document.getElementById("timerDisplay");
-  const toggleStartStopButton = document.getElementById(
-    "toggleStartStopButton"
-  );
-  // Removed playIcon and stopIcon references as they are no longer in the HTML
+  const startButton = document.getElementById("startButton");
+  const stopButton = document.getElementById("stopButton");
   const resetButton = document.getElementById("resetButton");
-  const nursingSideSelect = document.getElementById("nursingSideSelect");
+  const leftSideButton = document.getElementById("leftSideButton");
+  const rightSideButton = document.getElementById("rightSideButton");
+  const selectedSideDisplay = document.getElementById("selectedSide");
   const saveButton = document.getElementById("saveButton");
   const saveMessage = document.getElementById("saveMessage");
 
   // --- Early exit if critical elements are missing ---
   if (
     !timerDisplay ||
-    !toggleStartStopButton ||
+    !startButton ||
+    !stopButton ||
     !resetButton ||
-    !nursingSideSelect ||
+    !leftSideButton ||
+    !rightSideButton ||
+    !selectedSideDisplay ||
     !saveButton ||
     !saveMessage
   ) {
-    // Removed playIcon and stopIcon from checks
     console.error(
-      "NursingTimer init failed: One or more required DOM elements are missing."
+      "NursingTimer initialization failed: One or more required DOM elements are missing."
     );
-    return;
+    return; // Stop execution if elements aren't found
   }
 
   // --- Timer State ---
-  let timerInterval = null;
-  let startTime = 0;
-  let elapsedTime = 0;
+  let timerInterval = null; // Stores the interval ID, null when not running
+  let startTime = 0; // Timestamp when the current 'running' session began (or resumed)
+  let elapsedTime = 0; // Total accumulated time in milliseconds
   let isRunning = false;
-  let selectedSide = ""; // Default to empty string for "Select a side"
+  let selectedSide = null; // 'left' | 'right' | null
 
   // --- Helper Functions ---
 
   /**
    * Formats milliseconds into a HH:MM:SS string.
-   * @param {number} timeInMs - The time in milliseconds.
+   * Updates to handle milliseconds for smoother display.
+   * @param timeInMs - The time in milliseconds.
+   * @returns The formatted time string.
    */
   function formatTime(timeInMs) {
     const totalSeconds = Math.floor(timeInMs / 1000);
@@ -129,80 +155,108 @@ export function initNursingTimer({ userId, accessToken }) {
   }
 
   /**
-   * Centralized function to update the UI state.
+   * Centralized function to update the UI state of all buttons and indicators.
+   * This is a major improvement for maintainability.
    */
   function updateUI() {
-    // Update Start/Stop button appearance
-    if (isRunning) {
-      toggleStartStopButton.querySelector("span").textContent = "Stop";
-      toggleStartStopButton.classList.replace("bg-green-500", "bg-red-500");
-      toggleStartStopButton.classList.replace(
-        "hover:bg-green-600",
-        "hover:bg-red-600"
-      );
-      toggleStartStopButton.classList.replace(
-        "focus:ring-green-500",
-        "focus:ring-red-500"
+    // Enable/disable timer controls
+    startButton.disabled = isRunning;
+    stopButton.disabled = !isRunning;
+    resetButton.disabled = isRunning || elapsedTime === 0;
+    saveButton.disabled = isRunning || elapsedTime === 0 || !selectedSide;
+
+    // Update side button visual state
+    // Remove previous rings first to ensure correct toggle behavior
+    leftSideButton.classList.remove(
+      "ring-4",
+      "ring-blue-300",
+      "ring-purple-300",
+      "ring-peach-500",
+      "ring-offset-2"
+    );
+    rightSideButton.classList.remove(
+      "ring-4",
+      "ring-blue-300",
+      "ring-purple-300",
+      "ring-peach-500",
+      "ring-offset-2"
+    );
+
+    if (selectedSide === "left") {
+      leftSideButton.classList.add("ring-4", "ring-blue-300", "ring-offset-2");
+    } else {
+      leftSideButton.classList.add("ring-blue-400"); // Add default ring if not selected
+    }
+    if (selectedSide === "right") {
+      rightSideButton.classList.add(
+        "ring-4",
+        "ring-purple-300",
+        "ring-offset-2"
       );
     } else {
-      toggleStartStopButton.querySelector("span").textContent = "Start";
-      toggleStartStopButton.classList.replace("bg-red-500", "bg-green-500");
-      toggleStartStopButton.classList.replace(
-        "hover:bg-red-600",
-        "hover:bg-green-600"
-      );
-      toggleStartStopButton.classList.replace(
-        "focus:ring-red-500",
-        "focus:ring-green-500"
-      );
+      rightSideButton.classList.add("ring-purple-400"); // Add default ring if not selected
     }
-
-    // Update button disabled states
-    resetButton.disabled = isRunning || elapsedTime === 0;
-    // Save button is enabled if not running, time is > 0, and a side is selected (not empty string)
-    saveButton.disabled = isRunning || elapsedTime === 0 || selectedSide === "";
+    // Re-apply original side button colors based on your Tailwind setup, if needed.
+    // The focus-ring classes will handle the ring-offset-2 and other colors for active focus.
   }
 
   /**
-   * Updates the timer display text.
+   * Updates the timer display based on elapsed time.
    */
   function updateTimerDisplay() {
-    const currentTime = isRunning ? Date.now() - startTime : elapsedTime;
-    timerDisplay.textContent = formatTime(currentTime);
+    if (isRunning) {
+      elapsedTime = Date.now() - startTime;
+    }
+    timerDisplay.textContent = formatTime(elapsedTime);
   }
 
   // --- Event Handlers ---
 
-  function handleToggleStartStop() {
-    isRunning = !isRunning;
-    if (isRunning) {
-      startTime = Date.now() - elapsedTime;
-      timerInterval = setInterval(updateTimerDisplay, 100);
-      saveMessage.textContent = "";
-    } else {
-      clearInterval(timerInterval);
-      elapsedTime = Date.now() - startTime;
-    }
-    updateUI();
+  function handleStart() {
+    if (isRunning) return; // Prevent starting if already running
+
+    isRunning = true;
+    // Calculate startTime to allow for pausing/resuming
+    startTime = Date.now() - elapsedTime;
+
+    // Update frequently for smooth display (100ms)
+    timerInterval = setInterval(updateTimerDisplay, 100);
+    saveMessage.textContent = ""; // Clear any previous save messages
+    updateUI(); // Update button states
+  }
+
+  function handleStop() {
+    if (!isRunning || timerInterval === null) return; // Prevent stopping if not running
+
+    isRunning = false;
+    clearInterval(timerInterval); // Stop the interval
+    timerInterval = null; // Clear the interval ID
+    // Capture the final, precise elapsed time
+    elapsedTime = Date.now() - startTime;
+    updateTimerDisplay(); // Final display update to show precise stopped time
+    updateUI(); // Update button states
   }
 
   function handleReset() {
-    if (isRunning) {
-      clearInterval(timerInterval);
-    }
-    isRunning = false;
+    if (isRunning) handleStop(); // Stop the timer if it's running before resetting
+
     elapsedTime = 0;
     startTime = 0;
-    selectedSide = ""; // Reset to empty string for "Select a side"
-    nursingSideSelect.value = ""; // Reset dropdown to default option
-    saveMessage.textContent = "";
-    updateTimerDisplay(); // Will show 00:00:00
-    updateUI();
+    selectedSide = null; // Clear selected side
+
+    timerDisplay.textContent = "00:00:00"; // Reset display to zero
+    selectedSideDisplay.textContent = "Side: Not Selected"; // Reset side display
+    saveMessage.textContent = ""; // Clear save message
+
+    updateUI(); // Update button states (will disable save, enable start, etc.)
   }
 
-  function handleSideSelection() {
-    selectedSide = nursingSideSelect.value; // Get value from dropdown
-    updateUI();
+  function handleSideSelection(side) {
+    selectedSide = side;
+    selectedSideDisplay.textContent = `Side: ${
+      side.charAt(0).toUpperCase() + side.slice(1)
+    }`;
+    updateUI(); // Update button states (might enable save) and side button visuals
   }
 
   async function handleSave() {
@@ -211,20 +265,29 @@ export function initNursingTimer({ userId, accessToken }) {
         "Timer is at 0. Start and stop the timer before saving.";
       return;
     }
-    if (selectedSide === "") {
-      // Check if a side is selected (not empty string)
-      saveMessage.textContent = "Please select a nursing side before saving.";
+    if (!selectedSide) {
+      saveMessage.textContent =
+        "Please select a side (Left or Right) before saving.";
+      return;
+    }
+    // Ensure the timer has been started and stopped for a valid session
+    if (startTime === 0 || elapsedTime === 0) {
+      // Check elapsedTime as well
+      saveMessage.textContent =
+        "Timer was not started or stopped correctly. Please reset and try again.";
       return;
     }
 
-    saveButton.disabled = true;
+    saveButton.disabled = true; // Disable save button immediately
     saveMessage.textContent = "Saving session...";
 
     const sessionData = {
       user_id: userId,
+      // Use startTime and calculate endTime from precise elapsed duration
       start_time: new Date(startTime).toISOString(),
+      // endTime is calculated by adding the total elapsedTime to the original startTime
       end_time: new Date(startTime + elapsedTime).toISOString(),
-      duration_seconds: Math.floor(elapsedTime / 1000),
+      duration_seconds: Math.floor(elapsedTime / 1000), // Convert milliseconds back to seconds
       nursing_side: selectedSide,
     };
 
@@ -232,7 +295,12 @@ export function initNursingTimer({ userId, accessToken }) {
       const { error } = await supabase
         .from("nursing_sessions")
         .insert([sessionData]);
-      if (error) throw error;
+
+      if (error) {
+        // Log error for debugging, display user-friendly message
+        console.error("Supabase insert error:", error);
+        throw error; // Re-throw to be caught by the outer catch block
+      }
 
       saveMessage.textContent = "Session saved successfully!";
       // Reload after a short delay to allow the user to see the success message
@@ -243,15 +311,21 @@ export function initNursingTimer({ userId, accessToken }) {
       saveMessage.textContent = `Error: ${
         err.message || "An unknown error occurred."
       }`;
-      saveButton.disabled = false; // Re-enable on failure
+      saveButton.disabled = false; // Re-enable button on failure
     }
   }
 
   // --- Initial Setup ---
-  toggleStartStopButton.addEventListener("click", handleToggleStartStop);
+
+  // Attach event listeners
+  startButton.addEventListener("click", handleStart);
+  stopButton.addEventListener("click", handleStop);
   resetButton.addEventListener("click", handleReset);
-  nursingSideSelect.addEventListener("change", handleSideSelection); // Listen to change event
+  leftSideButton.addEventListener("click", () => handleSideSelection("left"));
+  rightSideButton.addEventListener("click", () => handleSideSelection("right"));
   saveButton.addEventListener("click", handleSave);
 
-  handleReset(); // Set the initial state of the component on load.
+  // Set initial UI state by calling reset.
+  // This ensures all buttons are in their correct initial disabled/enabled state.
+  handleReset();
 }
