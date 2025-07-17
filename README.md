@@ -1,25 +1,38 @@
-# Astro Starter Kit: Blog
+Markdown
 
-```sh
-npm create astro@latest -- --template blog
-```
+# Mommy Time App
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
+Welcome to Mommy Time, your dedicated companion designed to support new mothers through the beautiful and often challenging journey of parenthood. This application provides practical tools and comforting resources to help you track important milestones, manage feeding sessions, and find moments of peace in your busy day.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## ✨ Features
 
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+- **User Authentication:** Secure user accounts powered by Supabase for personalized experiences.
 
-Features:
+- **Nursing Timer:** A dedicated timer to track current feeding sessions, including start/stop and side selection.
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+- **Feeding Records:** Comprehensive logging and management of all your baby's feeding history.
+
+- **Journaling:** A private space to record thoughts, milestones, and daily reflections.
+
+- **Curated Resources:**
+
+  - **Tips of the Day:** Daily wisdom and advice for parenting.
+
+  - **Soothing Music:** Calming audio tracks for both baby and parent.
+
+  - **Helpful Videos:** Visual guides and relaxing content.
+
+  - **Recommended Books:** A curated list of essential reads for new parents.
+
+- **Responsive Design:** Built with Tailwind CSS for a seamless experience across all devices.
+
+## 🛠️ Technologies Used
+
+- **Astro:** The web framework powering the site's structure and content delivery.
+
+- **Supabase:** Provides the backend services, including user authentication and database for storing feeding records and journal entries.
+
+- **Tailwind CSS:** For rapid and responsive UI development.
 
 ## 🚀 Project Structure
 
@@ -27,42 +40,38 @@ Inside of your Astro project, you'll see the following folders and files:
 
 ```text
 ├── public/
+│   └── scripts/             # Client-side JavaScript for interactive features
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
+│   ├── components/         # Reusable Astro components (e.g., NavBar, NursingTimer)
+│   ├── layouts/            # Astro layouts for consistent page structure (e.g., Layout.astro)
+│   ├── lib/                # Utility functions, e.g., Supabase client initialization
+│   │   └── supabase.ts
+│   ├── pages/              # Astro pages, defining routes (e.g., index.astro, feeding_timer.astro)
+│   │   └── api/            # API routes for backend interactions (e.g., auth, nursing_sessions)
+│   └── styles/             # Global CSS styles
 ├── astro.config.mjs
 ├── README.md
 ├── package.json
 └── tsconfig.json
-```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+src/pages/: Contains your Astro pages, which are exposed as routes based on their file names.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+src/components/: Houses reusable UI components built with Astro.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+src/lib/: Stores shared utility functions, notably the Supabase client setup.
 
-Any static assets, like images, can be placed in the `public/` directory.
+src/pages/api/: Defines API endpoints for server-side operations (e.g., authentication, database interactions).
 
-## 🧞 Commands
+public/: Contains static assets like images and client-side JavaScript files.
 
+🧞 Commands
 All commands are run from the root of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Command	Action
+npm install	Installs project dependencies
+astro dev	Starts local development server at localhost:4321
+npm run build	Builds your production site to ./dist/
+npm run preview	Previews your build locally, before deploying
+npm run astro ...	Run CLI commands like astro add, astro check
+npm run astro -- --help	Get help using the Astro CLI
+```
