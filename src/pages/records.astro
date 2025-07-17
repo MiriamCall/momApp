@@ -1,6 +1,7 @@
 ---
 // src/pages/records.astro
 import Layout from "../layouts/Layout.astro";
+// We still import this for server-side session handling and initial data fetch
 import { supabase } from "../lib/supabase";
 
 // 1. Secure the page, same as the dashboard
@@ -25,14 +26,13 @@ if (authError) {
   return Astro.redirect("/signin");
 }
 
-// 2. Fetch nursing sessions for the logged-in user
-// RLS in Supabase automatically ensures we only get this user's data.
+// 2. Fetch nursing sessions for the logged-in user (still server-side)
 const { data: nursingSessions, error: dbError } = await supabase
   .from("nursing_sessions")
   .select("*")
   .order("start_time", { ascending: false }); // Show most recent first
 
-// Helper function to format duration
+// Helper function to format duration - removed type annotation
 const formatDuration = (seconds) => {
   if (seconds < 60) return `${seconds}s`;
   const minutes = Math.floor(seconds / 60);
@@ -69,11 +69,118 @@ const formatDuration = (seconds) => {
         ))
     }
 
+    <div
+      id="message-container"
+      class="fixed top-0 left-0 w-full p-4 z-50 hidden"
+    >
+      <div
+        id="message-box"
+        class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative shadow-lg"
+        role="alert"
+      >
+        <strong class="font-bold">Info!</strong>
+        <span class="block sm:inline" id="message-text"></span>
+        <div id="message-actions" class="mt-2 flex justify-end gap-2">
+          <button
+            id="message-confirm-btn"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm hidden"
+            >Yes</button
+          >
+          <button
+            id="message-cancel-btn"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded text-sm hidden"
+            >No</button
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Session Modal -->
+    <div
+      id="edit-modal-container"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden"
+    >
+      <div
+        class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full border border-peach-200"
+      >
+        <h2 class="text-2xl font-bold text-peach-700 mb-6 text-center">
+          Edit Nursing Session
+        </h2>
+        <form id="edit-session-form" class="space-y-4">
+          <input type="hidden" id="edit-session-id" name="id" />
+          <input type="hidden" id="edit-nursing-side" name="nursing_side" />
+          <input type="hidden" id="edit-start-time" name="start_time" />
+
+          <div>
+            <label for="edit-hours" class="block text-gray-700 text-left mb-2"
+              >Hours</label
+            >
+            <input
+              type="number"
+              id="edit-hours"
+              name="hours"
+              min="0"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label for="edit-minutes" class="block text-gray-700 text-left mb-2"
+              >Minutes</label
+            >
+            <input
+              type="number"
+              id="edit-minutes"
+              name="minutes"
+              min="0"
+              max="59"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label for="edit-seconds" class="block text-gray-700 text-left mb-2"
+              >Seconds</label
+            >
+            <input
+              type="number"
+              id="edit-seconds"
+              name="seconds"
+              min="0"
+              max="59"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="flex justify-end gap-4 mt-6">
+            <button
+              type="button"
+              id="edit-cancel-btn"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="edit-save-btn"
+              class="bg-rose-500 hover:bg-peach-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
       <ul role="list" class="divide-y divide-gray-200">
         {
           nursingSessions?.map((session) => (
-            <li class="p-4 flex justify-between items-center hover:bg-peach-50">
+            <li
+              class="p-4 flex justify-between items-center hover:bg-peach-50"
+              data-session-id={session.id}
+            >
               <div>
                 <p class="font-semibold text-gray-800">
                   {new Date(session.start_time).toLocaleString("en-US", {
@@ -86,16 +193,28 @@ const formatDuration = (seconds) => {
                     {session.nursing_side} Side
                   </span>
                   {" for "}
-                  <span class="font-bold">
+                  <span
+                    class="font-bold"
+                    data-duration-display={session.duration_seconds}
+                  >
                     {formatDuration(session.duration_seconds)}
                   </span>
                 </p>
               </div>
               <div class="flex gap-2">
-                <button class="text-blue-500 hover:underline text-sm" disabled>
+                <button
+                  class="edit-btn text-blue-500 hover:underline text-sm"
+                  data-session-id={session.id}
+                  data-nursing-side={session.nursing_side}
+                  data-duration-seconds={session.duration_seconds}
+                  data-start-time={session.start_time}
+                >
                   Edit
                 </button>
-                <button class="text-red-500 hover:underline text-sm" disabled>
+                <button
+                  class="delete-btn text-red-500 hover:underline text-sm"
+                  data-session-id={session.id}
+                >
                   Delete
                 </button>
               </div>
@@ -112,3 +231,302 @@ const formatDuration = (seconds) => {
     </div>
   </div>
 </Layout>
+
+<script
+  define:vars={{ userId: user?.id, accessToken: accessToken.value }}
+  type="module"
+>
+  // Import the new functions from recordActions.js
+  import { updateRecord, deleteRecord } from "/scripts/recordActions.js";
+
+  // Helper function to format duration (removed type annotation)
+  const formatDurationLocal = (seconds) => {
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  };
+
+  // --- Message UI Handlers (for alerts/success/error) ---
+  const messageContainer = document.getElementById("message-container");
+  const messageBox = document.getElementById("message-box");
+  const messageText = document.getElementById("message-text");
+  const messageActions = document.getElementById("message-actions");
+  const messageConfirmBtn = document.getElementById("message-confirm-btn");
+  const messageCancelBtn = document.getElementById("message-cancel-btn");
+
+  let resolveMessagePromise = null; // To hold the promise resolver for confirmation
+
+  function showMessage(msg, type = "info", showConfirm = false) {
+    if (
+      !messageContainer ||
+      !messageBox ||
+      !messageText ||
+      !messageActions ||
+      !messageConfirmBtn ||
+      !messageCancelBtn
+    ) {
+      console.error("Message UI elements not found.");
+      if (showConfirm) return Promise.resolve(false); // Fallback for confirmation
+      return;
+    }
+
+    messageText.textContent = msg;
+    messageContainer.classList.remove("hidden");
+    messageBox.classList.remove(
+      "bg-blue-100",
+      "border-blue-400",
+      "text-blue-700",
+      "bg-red-100",
+      "border-red-400",
+      "text-red-700",
+      "bg-green-100",
+      "border-green-400",
+      "text-green-700"
+    );
+    messageConfirmBtn.classList.add("hidden");
+    messageCancelBtn.classList.add("hidden");
+    messageActions.classList.add("hidden");
+
+    if (type === "error") {
+      messageBox.classList.add("bg-red-100", "border-red-400", "text-red-700");
+    } else if (type === "success") {
+      messageBox.classList.add(
+        "bg-green-100",
+        "border-green-400",
+        "text-green-700"
+      );
+    } else {
+      // info
+      messageBox.classList.add(
+        "bg-blue-100",
+        "border-blue-400",
+        "text-blue-700"
+      );
+    }
+
+    if (showConfirm) {
+      messageConfirmBtn.classList.remove("hidden");
+      messageCancelBtn.classList.remove("hidden");
+      messageActions.classList.remove("hidden");
+      // Always return a Promise when showConfirm is true
+      return new Promise((resolve) => {
+        resolveMessagePromise = resolve;
+      });
+    } else {
+      // Auto-hide non-confirm messages after a few seconds
+      setTimeout(hideMessage, 3000);
+    }
+  }
+
+  function hideMessage() {
+    if (messageContainer) {
+      messageContainer.classList.add("hidden");
+    }
+  }
+
+  // Event listeners for confirmation buttons
+  if (messageConfirmBtn) {
+    messageConfirmBtn.addEventListener("click", () => {
+      if (resolveMessagePromise) {
+        resolveMessagePromise(true);
+        hideMessage();
+      }
+    });
+  }
+
+  if (messageCancelBtn) {
+    messageCancelBtn.addEventListener("click", () => {
+      if (resolveMessagePromise) {
+        resolveMessagePromise(false);
+        hideMessage();
+      }
+    });
+  }
+  // --- End Message UI Handlers ---
+
+  // --- Edit Modal UI Handlers ---
+  const editModalContainer = document.getElementById("edit-modal-container");
+  const editSessionForm = document.getElementById("edit-session-form");
+  const editSessionIdInput = document.getElementById("edit-session-id");
+  const editNursingSideInput = document.getElementById("edit-nursing-side");
+  const editStartTimeInput = document.getElementById("edit-start-time");
+  const editHoursInput = document.getElementById("edit-hours");
+  const editMinutesInput = document.getElementById("edit-minutes");
+  const editSecondsInput = document.getElementById("edit-seconds");
+  const editCancelBtn = document.getElementById("edit-cancel-btn");
+
+  function showEditModal(sessionId, durationSeconds, nursingSide, startTime) {
+    if (
+      !editModalContainer ||
+      !editSessionIdInput ||
+      !editNursingSideInput ||
+      !editStartTimeInput ||
+      !editHoursInput ||
+      !editMinutesInput ||
+      !editSecondsInput
+    ) {
+      console.error("Edit modal UI elements not found.");
+      return;
+    }
+
+    editSessionIdInput.value = sessionId;
+    editNursingSideInput.value = nursingSide;
+    editStartTimeInput.value = startTime;
+
+    // Convert total seconds to hours, minutes, seconds for autofill
+    const hours = Math.floor(durationSeconds / 3600);
+    const minutes = Math.floor((durationSeconds % 3600) / 60);
+    const seconds = durationSeconds % 60;
+
+    editHoursInput.value = hours.toString();
+    editMinutesInput.value = minutes.toString();
+    editSecondsInput.value = seconds.toString();
+
+    editModalContainer.classList.remove("hidden");
+  }
+
+  function hideEditModal() {
+    if (editModalContainer && editSessionForm) {
+      editModalContainer.classList.add("hidden");
+      editSessionForm.reset(); // Clear form fields
+    }
+  }
+
+  // Event listener for Edit modal cancel button
+  if (editCancelBtn) {
+    editCancelBtn.addEventListener("click", hideEditModal);
+  }
+
+  // Event listener for Edit modal form submission
+  if (editSessionForm) {
+    editSessionForm.addEventListener("submit", async (event) => {
+      event.preventDefault(); // Prevent default form submission
+
+      const sessionId = editSessionIdInput.value;
+      const nursingSide = editNursingSideInput.value;
+      const startTime = editStartTimeInput.value;
+
+      const hours = parseInt(editHoursInput.value) || 0;
+      const minutes = parseInt(editMinutesInput.value) || 0;
+      const seconds = parseInt(editSecondsInput.value) || 0;
+
+      // Convert hours, minutes, seconds to total seconds
+      const newDurationSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      if (newDurationSeconds < 0 || isNaN(newDurationSeconds)) {
+        showMessage(
+          "Invalid duration entered. Please enter non-negative numbers.",
+          "error"
+        );
+        return;
+      }
+
+      // Use userId and accessToken passed from Astro
+      if (!userId || !accessToken) {
+        showMessage("Authentication required to update session.", "error");
+        return;
+      }
+
+      // Call the external updateRecord function
+      const result = await updateRecord(
+        sessionId,
+        newDurationSeconds,
+        nursingSide,
+        startTime,
+        userId,
+        accessToken
+      );
+
+      if (result.success) {
+        // Update the duration display in the specific list item
+        const listItem = document.querySelector(
+          `li[data-session-id="${sessionId}"]`
+        );
+        const durationSpan = listItem?.querySelector(
+          "span[data-duration-display]"
+        );
+        if (durationSpan) {
+          durationSpan.textContent = formatDurationLocal(newDurationSeconds);
+          durationSpan.dataset.durationDisplay = newDurationSeconds.toString(); // Update data attribute as well
+        }
+        showMessage(result.message, "success");
+        hideEditModal(); // Hide the modal after successful update
+      } else {
+        showMessage(result.message, "error");
+      }
+    });
+  }
+  // --- End Edit Modal UI Handlers ---
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const recordsList = document.querySelector('ul[role="list"]');
+
+    if (recordsList) {
+      recordsList.addEventListener("click", async (event) => {
+        const target = event.target; // Removed type assertion
+
+        // Handle Delete button click
+        if (target.classList.contains("delete-btn")) {
+          const sessionId = target.dataset.sessionId;
+          if (sessionId) {
+            // Await the Promise returned by showMessage and directly use the boolean result
+            const confirmed = await showMessage(
+              "Are you sure you want to delete this session?",
+              "info",
+              true
+            );
+            if (confirmed) {
+              // Now 'confirmed' is directly a boolean
+              // Use userId and accessToken passed from Astro
+              if (!userId || !accessToken) {
+                showMessage(
+                  "Authentication required to delete session.",
+                  "error"
+                );
+                return;
+              }
+
+              // Call the external deleteRecord function
+              const result = await deleteRecord(sessionId, userId, accessToken);
+
+              if (result.success) {
+                const listItem = target.closest("li");
+                if (listItem) {
+                  listItem.remove();
+                }
+                showMessage(result.message, "success");
+              } else {
+                showMessage(result.message, "error");
+              }
+            }
+          }
+        }
+
+        // Handle Edit button click
+        if (target.classList.contains("edit-btn")) {
+          const sessionId = target.dataset.sessionId;
+          const currentSide = target.dataset.nursingSide;
+          const currentDuration = parseInt(
+            target.dataset.durationSeconds || "0"
+          ); // Parse to number
+          const currentStartTime = target.dataset.startTime;
+
+          if (
+            sessionId &&
+            currentSide !== undefined &&
+            currentStartTime !== undefined
+          ) {
+            // Add checks for undefined
+            showEditModal(
+              sessionId,
+              currentDuration,
+              currentSide,
+              currentStartTime
+            );
+          }
+        }
+      });
+    }
+  });
+</script>

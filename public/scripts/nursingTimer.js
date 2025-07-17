@@ -1,13 +1,11 @@
+// public/scripts/nursingTimer.js
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 export function initNursingTimer({ userId, accessToken }) {
   // --- Supabase Client Setup ---
-  // Initialize the Supabase client with the provided access token.
-  // NOTE: Hardcoding URLs and keys is not recommended for production.
-  // It's better to use environment variables (e.g., import.meta.env.PUBLIC_SUPABASE_URL)
   const supabaseClient = createClient(
-    "https://nbjicydejhujbharetbk.supabase.co", // Replace with import.meta.env.PUBLIC_SUPABASE_URL in Astro
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iamljeWRlamh1amJoYXJldGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3Mzk0OTQsImV4cCI6MjA2NzMxNTQ5NH0.ew6OfER-EfHZJbfb5cchQ3CNqxyEHmI08g5R0bkMyOM", // Replace with import.meta.env.PUBLIC_SUPABASE_ANON_KEY in Astro
+    "https://nbjicydejhujbharetbk.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iamljeWRlamh1amJoYXJldGJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3Mzk0OTQsImV4cCI6MjA2NzMxNTQ5NH0.ew6OfER-EfHZJbfb5cchQ3CNqxyEHmI08g5R0bkMyOM",
     {
       global: {
         headers: {
