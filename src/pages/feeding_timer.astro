@@ -69,9 +69,12 @@ if (fetchError) {
 
 <Layout title="Nursing Timer - Mommy Time">
   <main class="flex-grow container mx-auto px-4 py-12 md:py-20 text-center">
-    <h1 class="text-4xl font-extrabold text-peach-700 mb-6">Nursing Timer</h1>
+    <h1 class="text-4xl font-extrabold text-peach-700 mb-6">
+      Your Feeding Session Tracker
+    </h1>
     <p class="text-lg text-gray-700 mb-8">
-      Track your baby's nursing sessions and which side was used.
+      Easily log each nursing session, keeping track of time and side for your
+      little one's growth.
     </p>
 
     <!-- ✅ Pass both userId and accessToken -->
@@ -80,21 +83,49 @@ if (fetchError) {
     <section class="mt-8 mb-12 max-w-md mx-auto">
       <button
         id="manualAddButton"
-        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
       >
-        Manually Add Session
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        Add a Past Feeding
       </button>
     </section>
 
     <section class="mt-12 max-w-2xl mx-auto">
       <h2 class="text-3xl font-bold text-peach-700 mb-6">
-        Your Nursing History
+        Your Feeding Records
       </h2>
       <div class="mb-6">
         <a
           href="/records"
-          class="inline-block bg-rose-500 hover:bg-peach-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+          class="inline-flex items-center bg-rose-500 hover:bg-peach-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+            ></path>
+          </svg>
           View All Records
         </a>
       </div>
@@ -129,339 +160,378 @@ if (fetchError) {
           </ul>
         ) : (
           <p class="text-gray-600">
-            No nursing sessions recorded yet. Start the timer!
+            No feeding sessions logged yet. Let's start tracking your first one!
           </p>
         )
       }
     </section>
-  </main>
 
-  <!-- Message UI Container (reused pattern) -->
-  <div id="message-container" class="fixed top-0 left-0 w-full p-4 z-50 hidden">
+    <!-- Message UI Container (reused pattern) -->
     <div
-      id="message-box"
-      class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative shadow-lg"
-      role="alert"
+      id="message-container"
+      class="fixed top-0 left-0 w-full p-4 z-50 hidden"
     >
-      <strong class="font-bold">Info!</strong>
-      <span class="block sm:inline" id="message-text"></span>
-      <div id="message-actions" class="mt-2 flex justify-end gap-2">
-        <button
-          id="message-confirm-btn"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm hidden"
-          >Yes</button
-        >
-        <button
-          id="message-cancel-btn"
-          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded text-sm hidden"
-          >No</button
-        >
+      <div
+        id="message-box"
+        class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative shadow-lg"
+        role="alert"
+      >
+        <strong class="font-bold">Info!</strong>
+        <span class="block sm:inline" id="message-text"></span>
+        <div id="message-actions" class="mt-2 flex justify-end gap-2">
+          <button
+            id="message-confirm-btn"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm hidden"
+            >Yes</button
+          >
+          <button
+            id="message-cancel-btn"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded text-sm hidden"
+            >No</button
+          >
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Manual Add Session Modal -->
-  <div
-    id="manual-add-modal-container"
-    class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden"
-  >
+    <!-- Manual Add Session Modal -->
     <div
-      class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full border border-peach-200"
+      id="manual-add-modal-container"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden"
     >
-      <h2 class="text-2xl font-bold text-peach-700 mb-6 text-center">
-        Manually Add Nursing Session
-      </h2>
-      <form id="manual-add-session-form" class="space-y-4">
-        <div>
-          <label
-            for="manual-nursing-side-select"
-            class="block text-gray-700 text-left mb-2">Nursing Side</label
-          >
-          <select
-            id="manual-nursing-side-select"
-            name="nursing_side"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-            required
-          >
-            <option value="">Select a side</option>
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
-        </div>
+      <div
+        class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full border border-peach-200"
+      >
+        <h2 class="text-2xl font-bold text-peach-700 mb-6 text-center">
+          Log a Past Feeding Session
+        </h2>
+        <form id="manual-add-session-form" class="space-y-4">
+          <div>
+            <label
+              for="manual-nursing-side-select"
+              class="block text-gray-700 text-left mb-2"
+              >Which side was used?</label
+            >
+            <select
+              id="manual-nursing-side-select"
+              name="nursing_side"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              required
+            >
+              <option value="">Select a side</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
 
-        <div>
-          <label
-            for="manual-start-time-input"
-            class="block text-gray-700 text-left mb-2">Start Time</label
-          >
-          <input
-            type="datetime-local"
-            id="manual-start-time-input"
-            name="start_time"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-            required
-          />
-        </div>
+          <div>
+            <label
+              for="manual-start-time-input"
+              class="block text-gray-700 text-left mb-2"
+              >When did this feeding start?</label
+            >
+            <input
+              type="datetime-local"
+              id="manual-start-time-input"
+              name="start_time"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              required
+            />
+          </div>
 
-        <h3 class="text-lg font-semibold text-gray-800 mt-4 mb-2">Duration</h3>
-        <div>
-          <label for="manual-hours" class="block text-gray-700 text-left mb-2"
-            >Hours</label
-          >
-          <input
-            type="number"
-            id="manual-hours"
-            name="hours"
-            min="0"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-            placeholder="0"
-          />
-        </div>
-        <div>
-          <label for="manual-minutes" class="block text-gray-700 text-left mb-2"
-            >Minutes</label
-          >
-          <input
-            type="number"
-            id="manual-minutes"
-            name="minutes"
-            min="0"
-            max="59"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-            placeholder="0"
-          />
-        </div>
-        <div>
-          <label for="manual-seconds" class="block text-gray-700 text-left mb-2"
-            >Seconds</label
-          >
-          <input
-            type="number"
-            id="manual-seconds"
-            name="seconds"
-            min="0"
-            max="59"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
-            placeholder="0"
-          />
-        </div>
+          <h3 class="text-lg font-semibold text-gray-800 mt-4 mb-2">
+            How long was this feeding?
+          </h3>
+          <div>
+            <label for="manual-hours" class="block text-gray-700 text-left mb-2"
+              >Hours</label
+            >
+            <input
+              type="number"
+              id="manual-hours"
+              name="hours"
+              min="0"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label
+              for="manual-minutes"
+              class="block text-gray-700 text-left mb-2">Minutes</label
+            >
+            <input
+              type="number"
+              id="manual-minutes"
+              name="minutes"
+              min="0"
+              max="59"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label
+              for="manual-seconds"
+              class="block text-gray-700 text-left mb-2">Seconds</label
+            >
+            <input
+              type="number"
+              id="manual-seconds"
+              name="seconds"
+              min="0"
+              max="59"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="0"
+            />
+          </div>
 
-        <div class="flex justify-end gap-4 mt-6">
-          <button
-            type="button"
-            id="manual-add-cancel-btn"
-            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            id="manual-add-save-btn"
-            class="bg-rose-500 hover:bg-peach-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-          >
-            Add Session
-          </button>
-        </div>
-      </form>
+          <div class="flex justify-end gap-4 mt-6">
+            <button
+              type="button"
+              id="manual-add-cancel-btn"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="manual-add-save-btn"
+              class="bg-rose-500 hover:bg-peach-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Add This Feeding
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
-</Layout>
+  </main>
 
-<script define:vars={{ userId, accessToken }} type="module">
-  import { insertManualNursingSession } from "/scripts/nursingTimer.js";
+  <script define:vars={{ userId, accessToken }} type="module">
+    import { insertManualNursingSession } from "/scripts/nursingTimer.js";
 
-  // --- Message UI Handlers (reused pattern) ---
-  const messageContainer = document.getElementById("message-container");
-  const messageBox = document.getElementById("message-box");
-  const messageText = document.getElementById("message-text");
-  const messageActions = document.getElementById("message-actions");
-  const messageConfirmBtn = document.getElementById("message-confirm-btn");
-  const messageCancelBtn = document.getElementById("message-cancel-btn");
+    // --- Message UI Handlers (reused pattern) ---
+    const messageContainer = document.getElementById("message-container");
+    const messageBox = document.getElementById("message-box");
+    const messageText = document.getElementById("message-text");
+    const messageActions = document.getElementById("message-actions");
+    const messageConfirmBtn = document.getElementById("message-confirm-btn");
+    const messageCancelBtn = document.getElementById("message-cancel-btn");
 
-  let resolveMessagePromise = null;
+    let resolveMessagePromise = null;
 
-  function showMessage(msg, type = "info", showConfirm = false) {
-    if (
-      !messageContainer ||
-      !messageBox ||
-      !messageText ||
-      !messageActions ||
-      !messageConfirmBtn ||
-      !messageCancelBtn
-    ) {
-      console.error("Message UI elements not found.");
-      if (showConfirm) return Promise.resolve(false);
-      return;
-    }
+    function showMessage(msg, type = "info", showConfirm = false) {
+      if (
+        !messageContainer ||
+        !messageBox ||
+        !messageText ||
+        !messageActions ||
+        !messageConfirmBtn ||
+        !messageCancelBtn
+      ) {
+        console.error("Message UI elements not found.");
+        if (showConfirm) return Promise.resolve(false);
+        return;
+      }
 
-    messageText.textContent = msg;
-    messageContainer.classList.remove("hidden");
-    messageBox.classList.remove(
-      "bg-blue-100",
-      "border-blue-400",
-      "text-blue-700",
-      "bg-red-100",
-      "border-red-400",
-      "text-red-700",
-      "bg-green-100",
-      "border-green-400",
-      "text-green-700"
-    );
-    messageConfirmBtn.classList.add("hidden");
-    messageCancelBtn.classList.add("hidden");
-    messageActions.classList.add("hidden");
-
-    if (type === "error") {
-      messageBox.classList.add("bg-red-100", "border-red-400", "text-red-700");
-    } else if (type === "success") {
-      messageBox.classList.add(
+      messageText.textContent = msg;
+      messageContainer.classList.remove("hidden");
+      messageBox.classList.remove(
+        "bg-blue-100",
+        "border-blue-400",
+        "text-blue-700",
+        "bg-red-100",
+        "border-red-400",
+        "text-red-700",
         "bg-green-100",
         "border-green-400",
         "text-green-700"
       );
-    } else {
-      // info
-      messageBox.classList.add(
-        "bg-blue-100",
-        "border-blue-400",
-        "text-blue-700"
-      );
-    }
+      messageConfirmBtn.classList.add("hidden");
+      messageCancelBtn.classList.add("hidden");
+      messageActions.classList.add("hidden");
 
-    if (showConfirm) {
-      messageConfirmBtn.classList.remove("hidden");
-      messageCancelBtn.classList.remove("hidden");
-      messageActions.classList.remove("hidden");
-      return new Promise((resolve) => {
-        resolveMessagePromise = resolve;
-      });
-    } else {
-      setTimeout(hideMessage, 3000);
-    }
-  }
-
-  function hideMessage() {
-    if (messageContainer) {
-      messageContainer.classList.add("hidden");
-    }
-  }
-
-  if (messageConfirmBtn) {
-    messageConfirmBtn.addEventListener("click", () => {
-      if (resolveMessagePromise) {
-        resolveMessagePromise(true);
-        hideMessage();
-      }
-    });
-  }
-
-  if (messageCancelBtn) {
-    messageCancelBtn.addEventListener("click", () => {
-      if (resolveMessagePromise) {
-        resolveMessagePromise(false);
-        hideMessage();
-      }
-    });
-  }
-  // --- End Message UI Handlers ---
-
-  // --- Manual Add Modal Handlers ---
-  const manualAddButton = document.getElementById("manualAddButton");
-  const manualAddModalContainer = document.getElementById(
-    "manual-add-modal-container"
-  );
-  const manualAddSessionForm = document.getElementById(
-    "manual-add-session-form"
-  );
-  const manualNursingSideSelect = document.getElementById(
-    "manual-nursing-side-select"
-  );
-  const manualStartTimeInput = document.getElementById(
-    "manual-start-time-input"
-  );
-  const manualHoursInput = document.getElementById("manual-hours");
-  const manualMinutesInput = document.getElementById("manual-minutes");
-  const manualSecondsInput = document.getElementById("manual-seconds");
-  const manualAddCancelBtn = document.getElementById("manual-add-cancel-btn");
-
-  function showManualAddModal() {
-    if (!manualAddModalContainer) {
-      console.error("Manual add modal container not found.");
-      return;
-    }
-    // Set current date and time as default for convenience
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for timezone to get local datetime
-    manualStartTimeInput.value = now.toISOString().slice(0, 16);
-    manualNursingSideSelect.value = ""; // Reset side selection
-    manualHoursInput.value = "0";
-    manualMinutesInput.value = "0";
-    manualSecondsInput.value = "0";
-
-    manualAddModalContainer.classList.remove("hidden");
-  }
-
-  function hideManualAddModal() {
-    if (manualAddModalContainer && manualAddSessionForm) {
-      manualAddModalContainer.classList.add("hidden");
-      manualAddSessionForm.reset();
-    }
-  }
-
-  if (manualAddButton) {
-    manualAddButton.addEventListener("click", showManualAddModal);
-  }
-
-  if (manualAddCancelBtn) {
-    manualAddCancelBtn.addEventListener("click", hideManualAddModal);
-  }
-
-  if (manualAddSessionForm) {
-    manualAddSessionForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const nursingSide = manualNursingSideSelect.value;
-      const startTime = manualStartTimeInput.value;
-      const hours = parseInt(manualHoursInput.value) || 0;
-      const minutes = parseInt(manualMinutesInput.value) || 0;
-      const seconds = parseInt(manualSecondsInput.value) || 0;
-
-      const durationSeconds = hours * 3600 + minutes * 60 + seconds;
-
-      if (!nursingSide) {
-        showMessage("Please select a nursing side.", "error");
-        return;
-      }
-      if (!startTime) {
-        showMessage("Please select a start time.", "error");
-        return;
-      }
-      if (durationSeconds <= 0) {
-        showMessage("Duration must be greater than 0.", "error");
-        return;
-      }
-      if (!userId || !accessToken) {
-        showMessage("Authentication required to add session.", "error");
-        return;
-      }
-
-      const result = await insertManualNursingSession(
-        nursingSide,
-        startTime,
-        durationSeconds,
-        userId,
-        accessToken
-      );
-
-      if (result.success) {
-        showMessage(result.message, "success");
-        hideManualAddModal();
-        // Reload the page to refresh the nursing history list
-        setTimeout(() => window.location.reload(), 800);
+      if (type === "error") {
+        messageBox.classList.add(
+          "bg-red-100",
+          "border-red-400",
+          "text-red-700"
+        );
+      } else if (type === "success") {
+        messageBox.classList.add(
+          "bg-green-100",
+          "border-green-400",
+          "text-green-700"
+        );
       } else {
-        showMessage(result.message, "error");
+        // info
+        messageBox.classList.add(
+          "bg-blue-100",
+          "border-blue-400",
+          "text-blue-700"
+        );
       }
-    });
-  }
-  // --- End Manual Add Modal Handlers ---
-</script>
+
+      if (showConfirm) {
+        messageConfirmBtn.classList.remove("hidden");
+        messageCancelBtn.classList.remove("hidden");
+        messageActions.classList.remove("hidden");
+        return new Promise((resolve) => {
+          resolveMessagePromise = resolve;
+        });
+      } else {
+        setTimeout(hideMessage, 3000);
+      }
+    }
+
+    function hideMessage() {
+      if (messageContainer) {
+        messageContainer.classList.add("hidden");
+      }
+    }
+
+    if (messageConfirmBtn) {
+      messageConfirmBtn.addEventListener("click", () => {
+        if (resolveMessagePromise) {
+          resolveMessagePromise(true);
+          hideMessage();
+        }
+      });
+    }
+
+    if (messageCancelBtn) {
+      messageCancelBtn.addEventListener("click", () => {
+        if (resolveMessagePromise) {
+          resolveMessagePromise(false);
+          hideMessage();
+        }
+      });
+    }
+    // --- End Message UI Handlers ---
+
+    // --- Manual Add Modal Handlers ---
+    const manualAddButton = document.getElementById("manualAddButton");
+    const manualAddModalContainer = document.getElementById(
+      "manual-add-modal-container"
+    );
+    const manualAddSessionForm = document.getElementById(
+      "manual-add-session-form"
+    );
+    const manualNursingSideSelect = document.getElementById(
+      "manual-nursing-side-select"
+    );
+    const manualStartTimeInput = document.getElementById(
+      "manual-start-time-input"
+    );
+    const manualHoursInput = document.getElementById("manual-hours");
+    const manualMinutesInput = document.getElementById("manual-minutes");
+    const manualSecondsInput = document.getElementById("manual-seconds");
+    const manualAddCancelBtn = document.getElementById("manual-add-cancel-btn");
+
+    function showManualAddModal() {
+      if (!manualAddModalContainer) {
+        console.error("Manual add modal container not found.");
+        return;
+      }
+      // Set current date and time as default for convenience
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for timezone to get local datetime
+      manualStartTimeInput.value = now.toISOString().slice(0, 16);
+      manualNursingSideSelect.value = ""; // Reset side selection
+      manualHoursInput.value = "0";
+      manualMinutesInput.value = "0";
+      manualSecondsInput.value = "0";
+
+      manualAddModalContainer.classList.remove("hidden");
+    }
+
+    function hideManualAddModal() {
+      if (manualAddModalContainer && manualAddSessionForm) {
+        manualAddModalContainer.classList.add("hidden");
+        manualAddSessionForm.reset();
+      }
+    }
+
+    if (manualAddButton) {
+      manualAddButton.addEventListener("click", showManualAddModal);
+    }
+
+    if (manualAddCancelBtn) {
+      manualAddCancelBtn.addEventListener("click", hideManualAddModal);
+    }
+
+    if (manualAddSessionForm) {
+      manualAddSessionForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const nursingSide = manualNursingSideSelect.value;
+        const startTime = manualStartTimeInput.value;
+        const hours = parseInt(manualHoursInput.value) || 0;
+        const minutes = parseInt(manualMinutesInput.value) || 0;
+        const seconds = parseInt(manualSecondsInput.value) || 0;
+
+        const durationSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        if (!nursingSide) {
+          showMessage("Please select a nursing side.", "error");
+          return;
+        }
+        if (!startTime) {
+          showMessage("Please select a start time.", "error");
+          return;
+        }
+        if (durationSeconds <= 0) {
+          showMessage("Duration must be greater than 0.", "error");
+          return;
+        }
+        if (!userId || !accessToken) {
+          showMessage("Authentication required to add session.", "error");
+          return;
+        }
+
+        const result = await insertManualNursingSession(
+          nursingSide,
+          startTime,
+          durationSeconds,
+          userId,
+          accessToken
+        );
+
+        if (result.success) {
+          showMessage(result.message, "success");
+          hideManualAddModal();
+          // Reload the page to refresh the nursing history list
+          setTimeout(() => window.location.reload(), 800);
+        } else {
+          showMessage(result.message, "error");
+        }
+      });
+    }
+    // --- End Manual Add Modal Handlers ---
+  </script>
+</Layout>
